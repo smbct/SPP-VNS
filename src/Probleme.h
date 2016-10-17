@@ -6,8 +6,8 @@
 typedef struct {
     int nbVar; // nombre de variable
     int nbCtr; // nombre de contrainte
-    int* couts; // vecteur de coûts
-    int** contraintes; // matrice des contraintes
+    int* cout; // vecteur de coûts
+    int** contrainte; // matrice des contraintes
 } Probleme;
 
 void chargerProbleme(char* nom, Probleme *probleme);
