@@ -14,23 +14,23 @@ void chargerProbleme(char* nom, Probleme *probleme) {
         fscanf(fichier, "%d", &probleme->nbVar);
 
         // allocation de la mémoire du problème
-        probleme->couts = malloc(((long unsigned int)probleme->nbVar)*sizeof(int));
-        probleme->contraintes = malloc(((long unsigned int)probleme->nbCtr)*sizeof(int*));
+        probleme->cout = malloc(((long unsigned int)probleme->nbVar)*sizeof(int));
+        probleme->contrainte = malloc(((long unsigned int)probleme->nbCtr)*sizeof(int*));
 
         for(int indCtr = 0; indCtr < probleme->nbCtr; indCtr++) {
-            probleme->contraintes[indCtr] = malloc(((long unsigned int)probleme->nbVar)*sizeof(int));
+            probleme->contrainte[indCtr] = malloc(((long unsigned int)probleme->nbVar)*sizeof(int));
         }
 
         // initialisation des contraintes
         for(int indCtr = 0; indCtr < probleme->nbCtr; indCtr ++) {
             for(int indVar = 0; indVar < probleme->nbVar; indVar ++) {
-                probleme->contraintes[indCtr][indVar] = 0;
+                probleme->contrainte[indCtr][indVar] = 0;
             }
         }
 
         // lecture du vecteur des coûts
         for(int indVar = 0; indVar < probleme->nbVar; indVar ++) {
-            fscanf(fichier, "%d", &probleme->couts[indVar]);
+            fscanf(fichier, "%d", &probleme->cout[indVar]);
         }
 
         // lecture des contraintes
@@ -44,7 +44,7 @@ void chargerProbleme(char* nom, Probleme *probleme) {
             for(int i = 0; i < nbElem; i++) {
                 int indice;
                 fscanf(fichier, "%d", &indice);
-                probleme->contraintes[indCtr][indice] = 1;
+                probleme->contrainte[indCtr][indice] = 1;
             }
         }
 
@@ -58,14 +58,14 @@ void chargerProbleme(char* nom, Probleme *probleme) {
 void detruireProbleme(Probleme* probleme) {
 
     // désallocation des couts
-    free(probleme->couts);
+    free(probleme->cout);
 
     // désallocation des contraites
     for(int indCtr = 0; indCtr < probleme->nbCtr; indCtr ++) {
-        free(probleme->contraintes[indCtr]);
+        free(probleme->contrainte[indCtr]);
     }
 
-    free(probleme->contraintes);
+    free(probleme->contrainte);
 }
 
 //------------------------------------------------------------------------------
@@ -73,13 +73,13 @@ void afficherProbleme(Probleme* probleme) {
 
     printf("max z = ");
     for(int indVar = 0; indVar < probleme->nbVar; indVar ++) {
-        printf("%d ", probleme->couts[indVar]);
+        printf("%d ", probleme->cout[indVar]);
     }
     printf("\n\ns/c\n");
 
     for(int indCtr = 0; indCtr < probleme->nbCtr; indCtr++) {
         for(int indVar = 0; indVar < probleme->nbVar; indVar++) {
-            printf("%d ", probleme->contraintes[indCtr][indVar]);
+            printf("%d ", probleme->contrainte[indCtr][indVar]);
         }
         printf("\n");
     }
