@@ -1,3 +1,8 @@
+/**
+ * \file Probleme.c
+ * \brief implémentation des fonctions pour manipuler les instance
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "Probleme.h"
