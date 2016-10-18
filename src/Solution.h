@@ -40,10 +40,24 @@ void initialiserSommeCtr(Solution* sol);
 void initialiserListeIndices(Solution* sol);
 
 /**
+ * \brief calcul de l'utilité d'une variable
+ * \param pb l'instance du problème SPP
+ * \param var l'indice de la variable dont on calcule l'utilité
+ */
+int calculerUtilite(Probleme* pb, int var);
+
+/**
  * \brief construction d'une solution gloutonne pour le problème
  * \param sol la solution retournée
  */
 void constructionGloutonne(Solution* sol);
+
+
+/**
+ * \brief affichage d'une solution sur la console
+ * \param sol la solution à afficher
+ */
+void afficherSolution(Solution* sol);
 
 /**
  * \brief création d'une solution non initialisée en mémoire
