@@ -1,9 +1,10 @@
 /**
  * \file Solution.c
  * \brief implémentation des fonctions pour manipuler un problème
- */ 
+ */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "Solution.h"
 
 //------------------------------------------------------------------------------
@@ -55,9 +56,86 @@ void initialiserListeIndices(Solution* sol) {
 }
 
 //------------------------------------------------------------------------------
+int calculerUtilite(Probleme* pb, int var) {
+    int somme = 0;
+
+    for(int i = 0; i < pb->nbCtr; i++) {
+        if(pb->contrainte[i][var] == 1) {
+            somme ++;
+        }
+    }
+
+    return pb->cout[var]/somme;
+}
+
+//------------------------------------------------------------------------------
 void constructionGloutonne(Solution* sol) {
 
-    // ajouter plein de beau code ici
+    // initialisation des solutions
+    for(int indVar = 0; indVar < sol->pb->nbVar; indVar ++) {
+        sol->valeur[indVar] = 0;
+    }
+
+    // calcule des utilité
+    int* utilite = malloc(((long unsigned int)sol->pb->nbVar)*sizeof(int));
+
+    for(int indVar = 0; indVar < sol->pb->nbVar; indVar ++) {
+        utilite[indVar] = calculerUtilite(sol->pb, indVar);
+    }
+
+    int nbVarRestant = sol->pb->nbVar;
+
+    while(nbVarRestant > 0) {
+
+        // recherche de l'utilité max
+        int uMax = -1;
+        int indMax = -1;
+
+        for(int indVar = 0; indVar < sol->pb->nbVar; indVar++) {
+            if( (uMax == -1 && utilite[indVar] != -1) || utilite[indVar] > uMax) {
+                uMax = utilite[indVar];
+                indMax = indVar;
+            }
+        }
+
+        // affectation de la variable à 1
+        sol->valeur[indMax] = 1;
+        nbVarRestant --;
+
+        // suppression des variables ne pouvant plus être affectées à 1
+        for(int indCtr = 0; indCtr < sol->pb->nbCtr; indCtr ++) {
+            if(sol->pb->contrainte[indCtr][indMax] == 1) {
+                // parcours des variables apparaissant dans la contrainte
+                for(int indVar = 0; indVar < sol->pb->nbVar; indVar ++) {
+                    if(sol->pb->contrainte[indCtr][indVar] == 1 && utilite[indVar] > -1) {
+                        utilite[indVar] = -1;
+                        nbVarRestant --;
+                    }
+                }
+            }
+        }
+    }
+
+    free(utilite);
+
+    initialiserZ(sol);
+    initialiserListeIndices(sol);
+    initialiserSommeCtr(sol);
+}
+
+
+//------------------------------------------------------------------------------
+void afficherSolution(Solution* sol) {
+
+    for(int i = 0; i < sol->pb->nbVar; i++) {
+        printf("%d", sol->valeur[i]);
+        if(i < sol->pb->nbVar-1) {
+            printf(", ");
+        } else {
+            printf("\n");
+        }
+    }
+    printf("\nz = %d\n", sol->z);
 
 }
 
