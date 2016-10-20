@@ -56,7 +56,7 @@ void initialiserListeIndices(Solution* sol) {
 }
 
 //------------------------------------------------------------------------------
-int calculerUtilite(Probleme* pb, int var) {
+double calculerUtilite(Probleme* pb, int var) {
     int somme = 0;
 
     for(int i = 0; i < pb->nbCtr; i++) {
@@ -65,7 +65,7 @@ int calculerUtilite(Probleme* pb, int var) {
         }
     }
 
-    return pb->cout[var]/somme;
+    return (double)pb->cout[var]/(double)somme;
 }
 
 //------------------------------------------------------------------------------
@@ -77,20 +77,22 @@ void constructionGloutonne(Solution* sol) {
     }
 
     // calcule des utilité
-    int* utilite = malloc(((long unsigned int)sol->pb->nbVar)*sizeof(int));
+    double* utilite = malloc(((long unsigned int)sol->pb->nbVar)*sizeof(double));
 
     for(int indVar = 0; indVar < sol->pb->nbVar; indVar ++) {
-        utilite[indVar] = calculerUtilite(sol->pb, indVar);
+         utilite[indVar] = calculerUtilite(sol->pb, indVar);
     }
 
     int nbVarRestant = sol->pb->nbVar;
 
+    // des objets sont ajoutés à la solution tant que possible
     while(nbVarRestant > 0) {
 
         // recherche de l'utilité max
         int uMax = -1;
         int indMax = -1;
 
+        // les utiliés à -1 sont celles pour lesquelles la variable ne peut plus être ajoutée
         for(int indVar = 0; indVar < sol->pb->nbVar; indVar++) {
             if( (uMax == -1 && utilite[indVar] != -1) || utilite[indVar] > uMax) {
                 uMax = utilite[indVar];

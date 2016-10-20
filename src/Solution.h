@@ -44,7 +44,7 @@ void initialiserListeIndices(Solution* sol);
  * \param pb l'instance du problème SPP
  * \param var l'indice de la variable dont on calcule l'utilité
  */
-int calculerUtilite(Probleme* pb, int var);
+double calculerUtilite(Probleme* pb, int var);
 
 /**
  * \brief construction d'une solution gloutonne pour le problème
