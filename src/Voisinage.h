@@ -62,4 +62,12 @@ int majSommeCtr0(Solution* sol, int ind);
  */
 void echanger(int* val1, int* val2);
 
+/**
+ * \brief choisi un nombre aléatoire entre min et max inclus
+ * \param min la valeur minimale de l'intervalle
+ * \param max la valeur maximale
+ * \return le nombre aléatoire
+ */
+int aleaBorne(int min, int max);
+
 #endif
