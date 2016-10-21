@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "Solution.h"
+#include "Voisinage.h"
 
 //------------------------------------------------------------------------------
 int main(int argc, char* argv[]) {
@@ -18,9 +19,9 @@ int main(int argc, char* argv[]) {
 
     printf("\nSolution actuelle : \n");
     afficherSolution(&sol);
+    printf("valeur z = %d\n", sol.z);
 
-    // amélioration de la solution
-
+    // tentative d'amélioration de la solution
     int continuer;
     do {
         continuer = echange12(&sol);
@@ -28,22 +29,7 @@ int main(int argc, char* argv[]) {
 
     printf("Solution après recherche locale : \n");
     afficherSolution(&sol);
-
-    initialiserSommeCtr(&sol);
-
-    printf("sommeCtr : \n");
-    for(int i = 0; i < pb.nbCtr; i++) {
-        printf("%d, ", sol.sommeCtr[i]);
-    }
-    printf("\n");
-
-    int val = 0;
-    for(int i = 0; i < pb.nbVar; i++) {
-        if(sol.valeur[i] == 1) {
-            val += pb.cout[i];
-        }
-    }
-    printf("valeur z = %d\n", val);
+    printf("valeur z = %d\n", sol.z);
 
     // destruction de la solution
     detruireSolution(&sol);

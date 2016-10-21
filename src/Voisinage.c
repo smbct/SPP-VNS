@@ -16,7 +16,7 @@ int majSommeCtr1(Solution* sol, int ind) {
             sol->sommeCtr[i] ++;
         }
 
-        if(sol->sommeCtr[i] >= 2) {
+        if(sol->sommeCtr[i] > 1) {
             rea = 0;
         }
     }
@@ -36,13 +36,53 @@ int majSommeCtr0(Solution* sol, int ind) {
         }
 
         // peut être vrai à cause d'une modif précédente non vérifiée (pour k/p = 1/2)
-        if(sol->sommeCtr[i] >= 2) {
+        if(sol->sommeCtr[i] > 1) {
             rea = 0;
         }
     }
 
     return rea;
 
+}
+
+//------------------------------------------------------------------------------
+int echange01(Solution* sol) {
+    int zMax = -1;
+    int zVois = sol->z;
+
+    int ind0Max;
+
+    printf("%d\n", zVois);
+
+    for(int i = 0; i < sol->nbVar0; i++) { // une variable affectée à 0 est réaffectée à 1
+
+        int rea = majSommeCtr1(sol, sol->var0[i]);
+        zVois += sol->pb->cout[sol->var0[i]];
+
+        if(rea == 1 && (zMax == -1 || zVois > zMax)) {
+            zMax = zVois;
+            ind0Max = i;
+        }
+
+        zVois -= sol->pb->cout[sol->var0[i]];
+        majSommeCtr0(sol, sol->var0[i]);
+
+    }
+
+    int ameliore = 0;
+
+    if(zMax > sol->z) {
+        ameliore = 1;
+        sol->z = zMax;
+        sol->valeur[sol->var0[ind0Max]] = 1;
+        majSommeCtr1(sol, sol->var0[ind0Max]);
+        sol->var1[sol->nbVar1] = sol->var0[ind0Max];
+        sol->nbVar1 ++;
+        sol->nbVar0 --;
+        sol->var0[ind0Max] = sol->var0[sol->nbVar0];
+    }
+
+    return ameliore;
 }
 
 //------------------------------------------------------------------------------
@@ -191,10 +231,8 @@ int echange12(Solution* sol) {
 
         // maj des indices
         echanger(&sol->var0[ind0Max1], &sol->var1[ind1Max]);
-
         sol->var1[sol->nbVar1] = sol->var0[ind0Max2];
         sol->nbVar1 ++;
-
         sol->nbVar0 --;
         sol->var0[ind0Max2] = sol->var0[sol->nbVar0];
 
