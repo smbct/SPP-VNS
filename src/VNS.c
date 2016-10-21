@@ -43,13 +43,10 @@ int rechercheLocale(Solution* sol, int k) {
                 ameliore = echange01(sol);
                 break;
             case 2:
-                ameliore = echange01(sol);
-                ameliore = (ameliore || echange11(sol));
+                ameliore = echange11(sol);
                 break;
             case 3:
-                ameliore = echange01(sol);
-                ameliore = (ameliore || echange11(sol));
-                ameliore = (ameliore || echange12(sol));
+                ameliore = echange12(sol);
                 break;
             default:
                 break;

@@ -31,6 +31,15 @@ int echange11(Solution* sol);
 int echange12(Solution* sol);
 
 /**
+ * \bref effectue un echange aléatoire entre deux variables
+ * \param sol la solution sur laquelle faire le mouvement
+ * \param k le nombre de variable à passer à 0
+ * \param p le nombre de variable à passer à 1
+ * \return 1 ssi la solution est réalisable
+ */
+int echangeAlea(Solution* sol, int k, int p);
+
+/**
  * \brief met à jour la somme sur les contraintes pour la passage d'une variable de 0 à 1
  * \param sol la solution modifiée
  * \param ind l'indice de la variable à passer à 1
