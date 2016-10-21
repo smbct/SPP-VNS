@@ -49,7 +49,7 @@ void chargerProbleme(char* nom, Probleme *probleme) {
             for(int i = 0; i < nbElem; i++) {
                 int indice;
                 fscanf(fichier, "%d", &indice);
-                probleme->contrainte[indCtr][indice] = 1;
+                probleme->contrainte[indCtr][indice-1] = 1;
             }
         }
 
