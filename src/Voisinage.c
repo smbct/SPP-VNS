@@ -3,6 +3,9 @@
  * \brief implémentation des fonctions de calcul de voisinage
  */
 
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "Voisinage.h"
 
 //------------------------------------------------------------------------------
@@ -249,8 +252,76 @@ void echanger(int* val1, int* val2) {
 //------------------------------------------------------------------------------
 int echangeAlea(Solution* sol, int k, int p) {
 
-    // ajouter du code ici ->
-    // sans erreur de préférence
-    // pour ne pas passer 50h à débuger
+    // indices des indices des variables à modifier
+    int *ind0 = malloc((long unsigned int)p*sizeof(int));
+    int *ind1 = malloc((long unsigned int)k*sizeof(int));
 
+    int rea = 1;
+
+    int indice;
+
+    // variables qui passent de 1 à 0
+    for(int i = 0; i < k; i++) {
+
+        indice = aleaBorne(0, sol->nbVar1-1);
+        ind1[i] = sol->var1[indice];
+        majSommeCtr0(sol, ind1[i]);
+        sol->z -= sol->pb->cout[ind1[i]];
+        sol->nbVar1 --;
+        sol->var1[indice] = sol->var1[sol->nbVar1];
+
+        // variables qui passent de 0 à 1
+        for(int j = 0; j < p; j++) {
+
+            indice = aleaBorne(0, sol->nbVar0-1);
+            ind0[j] = sol->var0[indice];
+            rea = majSommeCtr1(sol, ind0[j]);
+            sol->z += sol->pb->cout[ind0[j]];
+            sol->nbVar0 --;
+            sol->var0[indice] = sol->var0[sol->nbVar0];
+
+        }
+
+    }
+
+    if(rea) { // les changements sont gardés et finis
+
+        for(int i = 0; i < k; i++) {
+            sol->valeur[ind1[i]] = 0;
+            sol->var0[sol->nbVar0] = ind1[i];
+            sol->nbVar0 ++;
+        }
+        for(int i = 0; i < p; i++) {
+            sol->valeur[ind0[i]] = 1;
+            sol->var1[sol->nbVar1] = ind0[i];
+            sol->nbVar1 ++;
+        }
+
+    } else { // annulation des changements
+
+        // variables qui étaient passées de 1 à 0
+        for(int i = 0; i < k; i++) {
+            sol->var1[sol->nbVar1] = ind1[i];
+            sol->nbVar1 ++;
+            majSommeCtr1(sol, ind1[i]);
+            sol->z += sol->pb->cout[ind1[i]];
+        }
+        for(int i = 0; i < p; i++) {
+            sol->var0[sol->nbVar0] = ind0[i];
+            sol->nbVar0 ++;
+            majSommeCtr0(sol, ind0[i]);
+            sol->z -= sol->pb->cout[ind0[i]];
+        }
+
+    }
+
+    free(ind0);
+    free(ind1);
+
+    return rea;
+}
+
+//------------------------------------------------------------------------------
+int aleaBorne(int min, int max) {
+    return min + rand()%(max-min+1);
 }
