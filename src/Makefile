@@ -11,8 +11,14 @@ Solution.o: Solution.h Solution.c
 Voisinage.o: Voisinage.h Voisinage.c
 	$(CC) $(CFLAGS) Voisinage.c -c
 
-main: Probleme.o Solution.o Voisinage.o main.c
-	$(CC) $(CFLAGS) main.c Probleme.o Solution.o Voisinage.o -o main
+VNS.o: VNS.h VNS.c
+	$(CC) $(CFLAGS) VNS.c -c
+
+main: Probleme.o Solution.o Voisinage.o main.c VNS.o
+	$(CC) $(CFLAGS) main.c Probleme.o Solution.o Voisinage.o VNS.o -o main
+
+glpkSolver: Probleme.o Solution.o glpkSolver.c
+	$(CC) $(CFLAGS) glpkSolver.c Probleme.o Solution.o -lglpk -o glpkSolver
 
 clean:
 	@rm -rf *.o main

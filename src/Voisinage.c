@@ -52,8 +52,6 @@ int echange01(Solution* sol) {
 
     int ind0Max;
 
-    printf("%d\n", zVois);
-
     for(int i = 0; i < sol->nbVar0; i++) { // une variable affectée à 0 est réaffectée à 1
 
         int rea = majSommeCtr1(sol, sol->var0[i]);
