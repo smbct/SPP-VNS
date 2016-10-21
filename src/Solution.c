@@ -89,12 +89,12 @@ void constructionGloutonne(Solution* sol) {
     while(nbVarRestant > 0) {
 
         // recherche de l'utilité max
-        int uMax = -1;
+        double uMax = -1;
         int indMax = -1;
 
         // les utiliés à -1 sont celles pour lesquelles la variable ne peut plus être ajoutée
         for(int indVar = 0; indVar < sol->pb->nbVar; indVar++) {
-            if( (uMax == -1 && utilite[indVar] != -1) || utilite[indVar] > uMax) {
+            if( (uMax == -1 && utilite[indVar] >= 0) || utilite[indVar] > uMax) {
                 uMax = utilite[indVar];
                 indMax = indVar;
             }
@@ -102,6 +102,7 @@ void constructionGloutonne(Solution* sol) {
 
         // affectation de la variable à 1
         sol->valeur[indMax] = 1;
+        utilite[indMax] = -1; // la variable n'est plus sélectionnable
         nbVarRestant --;
 
         // suppression des variables ne pouvant plus être affectées à 1
@@ -109,7 +110,7 @@ void constructionGloutonne(Solution* sol) {
             if(sol->pb->contrainte[indCtr][indMax] == 1) {
                 // parcours des variables apparaissant dans la contrainte
                 for(int indVar = 0; indVar < sol->pb->nbVar; indVar ++) {
-                    if(sol->pb->contrainte[indCtr][indVar] == 1 && utilite[indVar] > -1) {
+                    if(sol->pb->contrainte[indCtr][indVar] == 1 && utilite[indVar] >= 0) {
                         utilite[indVar] = -1;
                         nbVarRestant --;
                     }

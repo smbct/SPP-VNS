@@ -8,6 +8,14 @@
 
 #include "Solution.h"
 
+
+/**
+ * \brief recherche une amélioration de la solution avec un 0/1 échange
+ * \param sol la solution à améliorer
+ * \return 1 ssi la solution a été améliorée
+ */
+int echange01(Solution* sol);
+
 /**
  * \brief recherche une amélioration de la solution avec un 1/1 échange
  * \param sol la solution à améliorer
