@@ -191,7 +191,6 @@ int echange12(Solution* sol) {
 
                 }
 
-
                 zVois -= sol->pb->cout[sol->var0[k]];
                 majSommeCtr0(sol, sol->var0[k]);
 
@@ -245,4 +244,13 @@ void echanger(int* val1, int* val2) {
     int tmp = *val1;
     *val1 = *val2;
     *val2 = tmp;
+}
+
+//------------------------------------------------------------------------------
+int echangeAlea(Solution* sol, int k, int p) {
+
+    // ajouter du code ici ->
+    // sans erreur de préférence
+    // pour ne pas passer 50h à débuger
+
 }

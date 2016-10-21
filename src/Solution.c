@@ -161,6 +161,7 @@ void copierSolution(Solution* sol, Solution* copie) {
     copie->z = sol->z;
     copie->nbVar0 = sol->nbVar0;
     copie->nbVar1 = sol->nbVar1;
+    copie->pb = sol->pb;
 
 }
 
