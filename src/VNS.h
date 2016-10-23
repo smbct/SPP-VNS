@@ -14,6 +14,11 @@
  */
 void rechercheVND(Solution* sol);
 
+/**
+ * \brief applique le principe de la métaheuristique VNS pour trouver une bonne solution
+ * \param sol la meilleurs solution trouvée
+ */
+void rechercheVNS(Solution* sol);
 
 /**
  * \brief effectue une recherche locale de sol à partir d'un voisinage

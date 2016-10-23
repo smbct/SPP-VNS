@@ -40,6 +40,14 @@ int echange12(Solution* sol);
 int echangeAlea(Solution* sol, int k, int p);
 
 /**
+ * \brief recherche un voisin aléatoire en fonction du niveau de voisinage
+ * \param sol la solution actuelle, le voisin aléatoire s'il a été trouvé
+ * \param k le niveau de voisinage choisi
+ * \return 1 ssi un voisin réalisable a été trouvé
+ */
+int voisinAlea(Solution* sol, int k);
+
+/**
  * \brief met à jour la somme sur les contraintes pour la passage d'une variable de 0 à 1
  * \param sol la solution modifiée
  * \param ind l'indice de la variable à passer à 1

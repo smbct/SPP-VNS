@@ -269,20 +269,20 @@ int echangeAlea(Solution* sol, int k, int p) {
         sol->z -= sol->pb->cout[ind1[i]];
         sol->nbVar1 --;
         sol->var1[indice] = sol->var1[sol->nbVar1];
+    }
 
-        // variables qui passent de 0 à 1
-        for(int j = 0; j < p; j++) {
+    // variables qui passent de 0 à 1
+    for(int i = 0; i < p; i++) {
 
-            indice = aleaBorne(0, sol->nbVar0-1);
-            ind0[j] = sol->var0[indice];
-            rea = majSommeCtr1(sol, ind0[j]);
-            sol->z += sol->pb->cout[ind0[j]];
-            sol->nbVar0 --;
-            sol->var0[indice] = sol->var0[sol->nbVar0];
-
-        }
+        indice = aleaBorne(0, sol->nbVar0-1);
+        ind0[i] = sol->var0[indice];
+        rea = majSommeCtr1(sol, ind0[i]);
+        sol->z += sol->pb->cout[ind0[i]];
+        sol->nbVar0 --;
+        sol->var0[indice] = sol->var0[sol->nbVar0];
 
     }
+
 
     if(rea) { // les changements sont gardés et finis
 
@@ -296,6 +296,7 @@ int echangeAlea(Solution* sol, int k, int p) {
             sol->var1[sol->nbVar1] = ind0[i];
             sol->nbVar1 ++;
         }
+
 
     } else { // annulation des changements
 
@@ -315,10 +316,41 @@ int echangeAlea(Solution* sol, int k, int p) {
 
     }
 
+
     free(ind0);
     free(ind1);
 
     return rea;
+}
+
+//------------------------------------------------------------------------------
+int voisinAlea(Solution* sol, int k) {
+
+    int nbEssais = 0, essaisMax = 10; // parfois, il peut ne pas y avoir de voisin, on limite la recherche
+    int realisable = 0;
+
+    // détermination de k et p en fonction du niveau de voisinage
+    int nb0, nb1;
+    if(k == 1) {
+        nb0 = 0;
+        nb1 = 1; // une variable passe de 0 à 1
+    } else if(k == 2) {
+        nb0 = 1;
+        nb1 = 1;
+    } else {
+        nb0 = 1;
+        nb1 = 2;
+    }
+
+    while(!realisable && nbEssais < essaisMax) {
+
+        realisable = echangeAlea(sol, nb0, nb1);
+        if(!realisable) {
+            nbEssais ++;
+        }
+    }
+
+    return realisable;
 }
 
 //------------------------------------------------------------------------------

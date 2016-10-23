@@ -3,6 +3,9 @@
  * \brief implémentation de fonctions pour la méthaheuristique VNS et VND
  */
 
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "VNS.h"
 #include "Voisinage.h"
 
@@ -26,6 +29,51 @@ void rechercheVND(Solution* sol) {
             k ++;
         }
     }
+}
+
+
+//------------------------------------------------------------------------------
+void rechercheVNS(Solution* sol) {
+
+    int k = 1;
+    int nbIt = 0, nbItMax = 10000;
+
+    constructionGloutonne(sol);
+
+    printf("z initial : %d\n", sol->z);
+
+    Solution voisin;
+    creerSolution(sol->pb, &voisin);
+
+    while(nbIt < nbItMax) {
+
+        k = 1;
+
+        while(k < 3) {
+
+            // on part de la solution actuelle qui est recopiée
+            copierSolution(sol, &voisin);
+
+            // choix d'un voisin aléatoire
+            int rea = voisinAlea(&voisin, k);
+
+            // recherche locale sur ce voisin
+            if(rea) {
+                rechercheLocale(&voisin, k);
+            }
+
+            if(rea && voisin.z > sol->z) {
+                copierSolution(&voisin, sol);
+                k = 1;
+            } else {
+                k ++;
+            }
+        }
+
+        nbIt ++;
+    }
+
+    detruireSolution(&voisin);
 
 }
 
