@@ -5,6 +5,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "VNS.h"
 #include "Voisinage.h"
@@ -36,7 +37,9 @@ void rechercheVND(Solution* sol) {
 void rechercheVNS(Solution* sol) {
 
     int k = 1;
-    int nbIt = 0, nbItMax = 10000;
+    int nbIt = 0, nbItMax = 5000;
+
+    FILE* sortie = fopen("../plot/out.res", "w");
 
     constructionGloutonne(sol);
 
@@ -59,12 +62,15 @@ void rechercheVNS(Solution* sol) {
 
             // recherche locale sur ce voisin
             if(rea) {
+                int initial = voisin.z;
                 rechercheLocale(&voisin, k);
+                fprintf(sortie, "%d %d %d %d\n", nbIt, initial, voisin.z, sol->z);
             }
 
             if(rea && voisin.z > sol->z) {
                 copierSolution(&voisin, sol);
                 k = 1;
+                nbItMax = nbIt + 5000; // critère d'arrêt : pas d'amélioration depuis une certain nombre d'itération
             } else {
                 k ++;
             }
@@ -74,6 +80,8 @@ void rechercheVNS(Solution* sol) {
     }
 
     detruireSolution(&voisin);
+
+    fclose(sortie);
 
 }
 
