@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
 
     Probleme pb;
 
-    chargerProbleme(/*"test.txt"*/"../instances/pb_100rnd0100.dat", &pb);
+    chargerProbleme(/*"test.txt"*/"../instances/pb_100rnd0300.dat", &pb);
 
     // afficherProbleme(&pb);
 
@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     printf("Solution gloutonne : \n");
     afficherSolution(&sol);
 
-    int rea = 0;
+    /*int rea = 0;
     Solution cpy;
     creerSolution(&pb, &cpy);
     copierSolution(&sol, &cpy);
@@ -36,13 +36,13 @@ int main(int argc, char* argv[]) {
     } while(!rea);
     printf("nbIt : %d\n", nbIt);
     afficherSolution(&cpy);
-    printf("valeur z = %d\n", cpy.z);
+    printf("valeur z = %d\n", cpy.z);*/
 
-    /*rechercheVND(&sol);
+    rechercheVNS(&sol);
 
-    printf("Solution après VND : \n");
+    printf("Solution après VNS : \n");
     afficherSolution(&sol);
-    printf("valeur z = %d\n", sol.z);*/
+    printf("valeur z = %d\n", sol.z);
 
     // destruction de la solution
     detruireSolution(&sol);
