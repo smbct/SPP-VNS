@@ -17,6 +17,7 @@ typedef struct {
     int* var1; // liste des indices des variables à 1
     int nbVar0; // nombre de variables à 0
     int nbVar1; // nombre de variable à 1
+    double* utilite; // utilité des variables
     Probleme* pb; // pointeur vers l'instance du problème
 }  Solution;
 
@@ -72,6 +73,12 @@ void creerSolution(Probleme* pb, Solution* sol);
  * \param copie la copie de la solution
  */
 void copierSolution(Solution* sol, Solution* copie);
+
+/**
+ * \brief reconstruit une solution qui n'est plus réalisable
+ * \param sol la solution à reconstruire
+ */
+void reconstruireSolution(Solution* sol);
 
 /**
  * \brief désallocation mémoire d'une solution

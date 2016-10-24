@@ -20,10 +20,10 @@ int main(int argc, char* argv[]) {
     Solution sol;
     creerSolution(&pb, &sol);
 
-    constructionGloutonne(&sol);
+    /*constructionGloutonne(&sol);
 
     printf("Solution gloutonne : \n");
-    afficherSolution(&sol);
+    afficherSolution(&sol);*/
 
     /*int rea = 0;
     Solution cpy;
@@ -38,9 +38,22 @@ int main(int argc, char* argv[]) {
     afficherSolution(&cpy);
     printf("valeur z = %d\n", cpy.z);*/
 
-    rechercheVNS(&sol);
+    /*rechercheVNS(&sol);
 
     printf("Solution après VNS : \n");
+    afficherSolution(&sol);
+    printf("valeur z = %d\n", sol.z);*/
+
+    printf("test de reconstruction :\n");
+
+    for(int i = 0; i < pb.nbVar; i++) {
+        sol.valeur[i] = 1;
+    }
+    initialiserZ(&sol);
+    initialiserListeIndices(&sol);
+    initialiserSommeCtr(&sol);
+
+    reconstruireSolution(&sol);
     afficherSolution(&sol);
     printf("valeur z = %d\n", sol.z);
 
