@@ -173,7 +173,94 @@ void creerSolution(Probleme* pb, Solution* sol) {
     sol->sommeCtr = malloc(((long unsigned int)pb->nbCtr)*sizeof(int));
     sol->var0 = malloc(((long unsigned int)pb->nbVar)*sizeof(int));
     sol->var1 = malloc(((long unsigned int)pb->nbVar)*sizeof(int));
+    sol->utilite = malloc(((long unsigned int)pb->nbVar)*sizeof(double));
     sol->pb = pb; // initialisation du pointeur vers l'instance
+}
+
+//------------------------------------------------------------------------------
+void reconstruireSolution(Solution* sol) {
+
+    int nbCtrV = 0;
+    for(int i = 0; i < sol->pb->nbCtr; i++) {
+        if(sol->sommeCtr[i] > 1) {
+            nbCtrV ++;
+        }
+    }
+
+    int* ctrV = malloc((long unsigned int)nbCtrV*sizeof(int)); // liste des contraintes qui sont violées
+    int ctr = 0;
+    for(int i = 0; i < sol->pb->nbCtr; i++) {
+        if(sol->sommeCtr[i] > 1) {
+            ctrV[ctr] = i;
+            ctr ++;
+        }
+    }
+
+    while(nbCtrV > 0) {
+
+        int varMin = -1;
+        int indCtrV = -1;
+        // enlever la variables qui a la plus faible utilité
+        for(int i = 0; i < nbCtrV; i++) {
+            // parcours de chaque variable de la contrainte
+            for(int var = 0; var < sol->pb->nbVar; var++) {
+                if(sol->valeur[var] == 1 && sol->pb->contrainte[ctrV[i]][var] == 1) {
+                    if(varMin == -1 || sol->utilite[varMin] < sol->utilite[var]) {
+                        varMin = var;
+                        indCtrV = i;
+                    }
+                }
+            }
+        }
+
+        // mise à jour de la solution et des indices des variables à 1 et 0
+        sol->valeur[varMin] = 0;
+
+        int ind1Var = 0, trouve = 0;
+        while(!trouve) {
+            if(sol->var1[ind1Var] == varMin) {
+                trouve = 1;
+            } else {
+                ind1Var ++;
+            }
+        }
+        sol->var0[sol->nbVar0] = ind1Var;
+        sol->nbVar0 ++;
+        sol->nbVar1 --;
+        sol->var1[ind1Var] = sol->var1[sol->nbVar1];
+
+        // mise à jour de la valeur de la fonction objectif
+        sol->z -= sol->pb->cout[varMin];
+
+        // mise à jour de la somme des contraintes
+        for(int i = 0; i < sol->pb->nbCtr; i++) {
+
+            if(sol->sommeCtr[i] == 2 && sol->pb->contrainte[i][varMin] == 1) {
+                // la contrainte doit être retirée de la liste des contraintes à rétablir
+                int j = 0, continuer = 1;
+                while(continuer) {
+                    if(ctrV[j] == i) {
+                        continuer = 0;
+                    } else {
+                        j ++;
+                    }
+                }
+                nbCtrV --;
+                ctrV[j] = ctrV[nbCtrV];
+            }
+
+            if(sol->pb->contrainte[i][varMin] == 1) {
+                sol->sommeCtr[i] --;
+
+
+            }
+
+        }
+
+    }
+
+    free(ctrV);
+
 }
 
 //------------------------------------------------------------------------------
@@ -182,4 +269,5 @@ void detruireSolution(Solution* sol) {
     free(sol->sommeCtr);
     free(sol->var0);
     free(sol->var1);
+    free(sol->utilite);
 }
