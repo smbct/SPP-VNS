@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
 
     Probleme pb;
 
-    chargerProbleme(/*"test.txt"*/"../instances/pb_200rnd0900.dat", &pb);
+    chargerProbleme(/*"test.txt"*/"../instances/pb_100rnd0100.dat", &pb);
 
     // afficherProbleme(&pb);
 
@@ -38,31 +38,11 @@ int main(int argc, char* argv[]) {
     afficherSolution(&cpy);
     printf("valeur z = %d\n", cpy.z);*/
 
-    /*rechercheVNS(&sol);
+    rechercheVND(&sol);
 
     printf("Solution après VNS : \n");
     afficherSolution(&sol);
-    printf("valeur z = %d\n", sol.z);*/
-
-    printf("test de reconstruction :\n");
-
-    for(int i = 0; i < pb.nbVar; i++) {
-        sol.valeur[i] = 1;
-    }
-    initialiserZ(&sol);
-    initialiserListeIndices(&sol);
-    initialiserSommeCtr(&sol);
-
-    reconstruireSolution(&sol);
-    afficherSolution(&sol);
     printf("valeur z = %d\n", sol.z);
-
-    initialiserSommeCtr(&sol);
-    printf("somme ctr : \n");
-    for(int i = 0; i < pb.nbCtr; i++) {
-        printf("%d, ", sol.sommeCtr[i]);
-    }
-    printf("\n");
 
     // destruction de la solution
     detruireSolution(&sol);

@@ -16,20 +16,29 @@ void rechercheVND(Solution* sol) {
     int k = 1;
     int ameliore;
 
+
+    FILE* sortie = fopen("../plot/out.res", "w");
     constructionGloutonne(sol);
 
     printf("z initial : %d\n", sol->z);
 
+    int nbIter = 1;
     while(k < 4) {
 
         ameliore = rechercheLocale(sol, k);
+        fprintf(sortie, "%d %d %d %d\n", nbIter, sol->z, sol->z, sol->z);
+
+        printf("nbIter : %d, z : %d\n", nbIter, sol->z);
 
         if(ameliore) {
             k = 1;
         } else {
             k ++;
         }
+        nbIter ++;
     }
+
+    fclose(sortie);
 }
 
 
@@ -37,7 +46,7 @@ void rechercheVND(Solution* sol) {
 void rechercheVNS(Solution* sol) {
 
     int k = 1;
-    int nbIt = 0, nbItMax = 5000;
+    int nbIt = 0, nbItMax = 1000;
 
     FILE* sortie = fopen("../plot/out.res", "w");
 
@@ -59,22 +68,27 @@ void rechercheVNS(Solution* sol) {
 
             // choix d'un voisin aléatoire
             int rea = voisinAlea(&voisin, k);
+            int initial = voisin.z;
 
             // recherche locale sur ce voisin
             if(rea) {
-                int initial = voisin.z;
                 rechercheLocale(&voisin, k);
-                fprintf(sortie, "%d %d %d %d\n", nbIt, initial, voisin.z, sol->z);
             }
 
             if(rea && voisin.z > sol->z) {
                 copierSolution(&voisin, sol);
                 k = 1;
-                nbItMax = nbIt + 5000; // critère d'arrêt : pas d'amélioration depuis une certain nombre d'itération
+                nbItMax = nbIt + 1000; // critère d'arrêt : pas d'amélioration depuis une certain nombre d'itération
             } else {
                 k ++;
             }
+
+            if(rea) {
+                fprintf(sortie, "%d %d %d %d\n", nbIt, initial, voisin.z, sol->z);
+            }
         }
+
+        printf("zMax : %d, nbIt : %d\n", sol->z, nbIt);
 
         nbIt ++;
     }
