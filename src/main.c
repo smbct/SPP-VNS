@@ -57,6 +57,13 @@ int main(int argc, char* argv[]) {
     afficherSolution(&sol);
     printf("valeur z = %d\n", sol.z);
 
+    initialiserSommeCtr(&sol);
+    printf("somme ctr : \n");
+    for(int i = 0; i < pb.nbCtr; i++) {
+        printf("%d, ", sol.sommeCtr[i]);
+    }
+    printf("\n");
+
     // destruction de la solution
     detruireSolution(&sol);
 
