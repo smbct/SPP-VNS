@@ -350,6 +350,12 @@ int voisinAlea(Solution* sol, int k) {
         }
     }
 
+    /*realisable = echangeAlea(sol, nb0, nb1);
+    if(!realisable) {
+        reconstruireSolution(sol);
+        realisable = 1;
+    }*/
+
     return realisable;
 }
 
