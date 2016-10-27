@@ -15,8 +15,8 @@ void chargerProbleme(char* nom, Probleme *probleme) {
     if(fichier) {
 
         // lecture du nombre de contrainte et du nombre de variable
-        fscanf(fichier, "%d", &probleme->nbCtr);
-        fscanf(fichier, "%d", &probleme->nbVar);
+        int res = fscanf(fichier, "%d", &probleme->nbCtr);
+        res = fscanf(fichier, "%d", &probleme->nbVar);
 
         // allocation de la mémoire du problème
         probleme->cout = malloc(((long unsigned int)probleme->nbVar)*sizeof(int));
@@ -35,7 +35,7 @@ void chargerProbleme(char* nom, Probleme *probleme) {
 
         // lecture du vecteur des coûts
         for(int indVar = 0; indVar < probleme->nbVar; indVar ++) {
-            fscanf(fichier, "%d", &probleme->cout[indVar]);
+            res = fscanf(fichier, "%d", &probleme->cout[indVar]);
         }
 
         // lecture des contraintes
@@ -43,15 +43,49 @@ void chargerProbleme(char* nom, Probleme *probleme) {
 
             // nombre d'élément non nul dans la contraite
             int nbElem = 0;
-            fscanf(fichier, "%d", &nbElem);
+            res = fscanf(fichier, "%d", &nbElem);
 
             // indices des éléments non nuls
             for(int i = 0; i < nbElem; i++) {
                 int indice;
-                fscanf(fichier, "%d", &indice);
+                res = fscanf(fichier, "%d", &indice);
                 probleme->contrainte[indCtr][indice-1] = 1;
             }
         }
+
+
+        // initialisation des listes d'association variable/contrainte
+        probleme->nbCtrVar = malloc(((long unsigned int)probleme->nbVar)*sizeof(int));
+        for(int indVar = 0; indVar < probleme->nbVar; indVar ++) {
+            probleme->nbCtrVar[indVar] = 0;
+        }
+        // calcul du nombre de contrainte dans lesquelles apparait chaque variable
+        for(int indCtr = 0; indCtr < probleme->nbCtr; indCtr ++) {
+            for(int indVar = 0; indVar < probleme->nbVar; indVar ++) {
+                if(probleme->contrainte[indCtr][indVar]) {
+                    probleme->nbCtrVar[indVar] ++;
+                }
+            }
+        }
+
+        // alocation des tableaux de liste
+        probleme->ctrVar = malloc(((long unsigned int)probleme->nbVar)*sizeof(int*));
+        for(int indVar = 0; indVar < probleme->nbVar; indVar ++) {
+            probleme->ctrVar[indVar] = malloc(((long unsigned int)probleme->nbCtrVar[indVar])*sizeof(int));
+        }
+
+        // remplissage des tableaux
+        for(int indVar = 0; indVar < probleme->nbVar; indVar ++)  {
+            int ind = 0;
+            // pour chaque variables les contraintes associées sont répertoriées
+            for(int indCtr = 0; indCtr < probleme->nbCtr; indCtr ++) {
+                if(probleme->contrainte[indCtr][indVar]) {
+                    probleme->ctrVar[indVar][ind] = indCtr;
+                    ind ++;
+                }
+            }
+        }
+
 
     } else {
         printf("Erreur, impossible de charger l'instance.\n");
@@ -62,10 +96,17 @@ void chargerProbleme(char* nom, Probleme *probleme) {
 //------------------------------------------------------------------------------
 void detruireProbleme(Probleme* probleme) {
 
+    // désallocation de la liste d'association entre variables et contraintes
+    for(int indVar = 0; indVar < probleme->nbVar; indVar ++) {
+        free(probleme->ctrVar[indVar]);
+    }
+    free(probleme->ctrVar);
+    free(probleme->nbCtrVar);
+
     // désallocation des couts
     free(probleme->cout);
 
-    // désallocation des contraites
+    // désallocation des contraintes
     for(int indCtr = 0; indCtr < probleme->nbCtr; indCtr ++) {
         free(probleme->contrainte[indCtr]);
     }
