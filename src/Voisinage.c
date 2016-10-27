@@ -53,7 +53,7 @@ int echange01(Solution* sol) {
     int zMax = -1;
     int zVois = sol->z;
 
-    int ind0Max;
+    int ind0Max = -1;
 
     for(int i = 0; i < sol->nbVar0; i++) { // une variable affectée à 0 est réaffectée à 1
 
@@ -92,8 +92,8 @@ int echange11(Solution* sol) {
     int zMax = -1;
     int zVois = sol->z;
 
-    int ind0Max; // variable à affecter à 1
-    int ind1Max; // variable à affecter à 0
+    int ind0Max = -1; // variable à affecter à 1
+    int ind1Max = -1; // variable à affecter à 0
 
     for(int i = 0; i < sol->nbVar0; i++) { // une variable affectée à 0 est réaffectée à 1
 
@@ -160,9 +160,9 @@ int echange12(Solution* sol) {
     int zMax = -1;
     int zVois = sol->z;
 
-    int ind0Max1; // variable à affecter à 1
-    int ind0Max2; // deuxième variable à affecter à 1
-    int ind1Max; // variable à affecter à 0
+    int ind0Max1 = -1; // variable à affecter à 1
+    int ind0Max2 = -1; // deuxième variable à affecter à 1
+    int ind1Max = -1; // variable à affecter à 0
 
     // une variable est passée de 1 à 0
     for(int i = 0; i < sol->nbVar1; i++) {
@@ -171,16 +171,17 @@ int echange12(Solution* sol) {
         majSommeCtr0(sol, sol->var1[i]);
 
         // une première variables est passée de 0 à 1
-        for(int j = 0; j < sol->nbVar0; j++) {
+        for(int j = 0; j < sol->nbVar0-1; j++) {
 
             zVois += sol->pb->cout[sol->var0[j]];
             majSommeCtr1(sol, sol->var0[j]);
 
             // une seconde variable est passée de 0 à 1
-            for(int k = j+1; k < sol->nbVar0-1; k++) {
+            for(int k = j+1; k < sol->nbVar0; k++) {
 
                 zVois += sol->pb->cout[sol->var0[k]];
-                int rea = majSommeCtr1(sol, sol->var0[k]);
+                int rea = 0;
+                rea = majSommeCtr1(sol, sol->var0[k]);
 
                 // si la solution est réalisable, mise à jour
                 if(rea) {

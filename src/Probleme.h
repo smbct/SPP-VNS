@@ -12,6 +12,8 @@ typedef struct {
     int nbCtr; // nombre de contrainte
     int* cout; // vecteur de coûts
     int** contrainte; // matrice des contraintes
+    int* nbCtrVar; // nombre de contrainte dans laquelle apparait chaque variables
+    int** ctrVar; // contraintes dans lesquelles chaque variable apparait
 } Probleme;
 
 /**
