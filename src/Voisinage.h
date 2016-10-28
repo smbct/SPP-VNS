@@ -51,17 +51,15 @@ int voisinAlea(Solution* sol, int k);
  * \brief met à jour la somme sur les contraintes pour la passage d'une variable de 0 à 1
  * \param sol la solution modifiée
  * \param ind l'indice de la variable à passer à 1
- * \return 1 ssi la solution est toujours réalisable
  */
-int majSommeCtr1(Solution* sol, int ind);
+void majSommeCtr1(Solution* sol, int ind);
 
 /**
  * \brief met à jour la somme sur les contraintes pour la passage d'une variable de 1 à 0
  * \param sol la solution modifiée
  * \param ind l'indice de la variable à passer à 0
- * \return 1 ssi la solution est toujours réalisable
  */
-int majSommeCtr0(Solution* sol, int ind);
+void majSommeCtr0(Solution* sol, int ind);
 
 /**
  * \brief echange deux valeurs

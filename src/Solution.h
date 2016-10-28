@@ -19,6 +19,7 @@ typedef struct {
     int nbVar1; // nombre de variable à 1
     double* utilite; // utilité des variables
     Probleme* pb; // pointeur vers l'instance du problème
+    int nbCtrVio; // nombre de contraintes violées
 }  Solution;
 
 

@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
 
     Probleme pb;
 
-    chargerProbleme("test.txt"/*"../instances/pb_200rnd0700.dat"*/, &pb);
+    chargerProbleme(/*"test.txt"*/"../instances/pb_200rnd0700.dat", &pb);
 
     // afficherProbleme(&pb);
 

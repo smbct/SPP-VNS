@@ -18,6 +18,8 @@ void initialiserZ(Solution* sol) {
         }
     }
 
+    sol->nbCtrVio = 0;
+
 }
 
 //------------------------------------------------------------------------------
@@ -33,6 +35,9 @@ void initialiserSommeCtr(Solution* sol) {
             }
         }
 
+        if(sol->sommeCtr[indCtr] > 1) {
+            sol->nbCtrVio ++;
+        }
     }
 
 }
@@ -162,6 +167,7 @@ void copierSolution(Solution* sol, Solution* copie) {
     copie->nbVar0 = sol->nbVar0;
     copie->nbVar1 = sol->nbVar1;
     copie->pb = sol->pb;
+    copie->nbCtrVio = sol->nbCtrVio;
 
 }
 
@@ -175,19 +181,13 @@ void creerSolution(Probleme* pb, Solution* sol) {
     sol->var1 = malloc(((long unsigned int)pb->nbVar)*sizeof(int));
     sol->utilite = malloc(((long unsigned int)pb->nbVar)*sizeof(double));
     sol->pb = pb; // initialisation du pointeur vers l'instance
+    sol->nbCtrVio = 0;
 }
 
 //------------------------------------------------------------------------------
 void reconstruireSolution(Solution* sol) {
 
-    int nbCtrV = 0;
-    for(int i = 0; i < sol->pb->nbCtr; i++) {
-        if(sol->sommeCtr[i] > 1) {
-            nbCtrV ++;
-        }
-    }
-
-    while(nbCtrV > 0) {
+    while(sol->nbCtrVio > 0) {
 
         int varMin = -1;
         // enlever la variables qui a la plus faible utilité
@@ -234,7 +234,7 @@ void reconstruireSolution(Solution* sol) {
             if(sol->pb->contrainte[indCtr][varMin] == 1 && sol->pb->contrainte[indCtr][varMin] == 1) {
                 // la contrainte doit être retirée de la liste des contraintes à rétablir
                 if(sol->sommeCtr[indCtr] == 2) {
-                    nbCtrV --;
+                    sol->nbCtrVio --;
                 }
                 sol->sommeCtr[indCtr] --;
             }
