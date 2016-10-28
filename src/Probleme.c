@@ -86,6 +86,16 @@ void chargerProbleme(char* nom, Probleme *probleme) {
             }
         }
 
+        /*printf("liste var - ctr : \n");
+        for(int i = 0; i < probleme->nbVar; i++) {
+            printf("%d : ", i);
+            for(int j = 0; j < probleme->nbCtrVar[i]; j++) {
+                printf("%d, ", probleme->ctrVar[i][j]);
+            }
+            printf("%d", probleme->nbCtrVar[i]);
+            printf("\n");
+        }*/
+
 
     } else {
         printf("Erreur, impossible de charger l'instance.\n");

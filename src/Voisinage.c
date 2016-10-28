@@ -9,42 +9,40 @@
 #include "Voisinage.h"
 
 //------------------------------------------------------------------------------
-int majSommeCtr1(Solution* sol, int ind) {
-
-    int rea = 1;
+void majSommeCtr1(Solution* sol, int ind) {
 
     // mise à jour des sommes des contraintes
-    for(int i = 0; i < sol->pb->nbCtr; i++) {
-        if(sol->pb->contrainte[i][ind] == 1) {
-            sol->sommeCtr[i] ++;
-        }
+    for(int i = 0; i < sol->pb->nbCtrVar[ind]; i++) {
+        int indCtr = sol->pb->ctrVar[ind][i];
 
-        if(sol->sommeCtr[i] > 1) {
-            rea = 0;
+        if(sol->pb->contrainte[indCtr][ind] == 1) {
+            sol->sommeCtr[indCtr] ++;
+
+            if(sol->sommeCtr[indCtr] == 2) { // la contrainte est désormais violée
+                sol->nbCtrVio ++;
+            }
         }
     }
 
-    return rea;
 }
 
 //------------------------------------------------------------------------------
-int majSommeCtr0(Solution* sol, int ind) {
-
-    int rea = 1;
+void majSommeCtr0(Solution* sol, int ind) {
 
     // mise à jour des sommes des contraintes
-    for(int i = 0; i < sol->pb->nbCtr; i++) {
-        if(sol->pb->contrainte[i][ind] == 1) {
-            sol->sommeCtr[i] --;
+    for(int i = 0; i < sol->pb->nbCtrVar[ind]; i++) {
+        int indCtr = sol->pb->ctrVar[ind][i];
+        if(sol->pb->contrainte[indCtr][ind] == 1) {
+            sol->sommeCtr[indCtr] --;
+
+            // la contrainte était peut-être violée
+            if(sol->sommeCtr[i] == 1) {
+                sol->nbCtrVio --;
+            }
         }
 
-        // peut être vrai à cause d'une modif précédente non vérifiée (pour k/p = 1/2)
-        if(sol->sommeCtr[i] > 1) {
-            rea = 0;
-        }
     }
 
-    return rea;
 
 }
 
@@ -57,10 +55,10 @@ int echange01(Solution* sol) {
 
     for(int i = 0; i < sol->nbVar0; i++) { // une variable affectée à 0 est réaffectée à 1
 
-        int rea = majSommeCtr1(sol, sol->var0[i]);
+        majSommeCtr1(sol, sol->var0[i]);
         zVois += sol->pb->cout[sol->var0[i]];
 
-        if(rea == 1 && (zMax == -1 || zVois > zMax)) {
+        if(sol->nbCtrVio == 0 && (zMax == -1 || zVois > zMax)) {
             zMax = zVois;
             ind0Max = i;
         }
@@ -107,11 +105,11 @@ int echange11(Solution* sol) {
             // la variable var0[i] passe à 1 et la variables var1[j] passe à 0
 
             // test de réalisabilité et mise à jour des sommes en même temps
-            int rea = majSommeCtr0(sol, sol->var1[j]);
+            majSommeCtr0(sol, sol->var1[j]);
             zVois -= sol->pb->cout[sol->var1[j]];
 
             // si la solution est réalisable, on peut comparer la valeur du max
-            if(rea == 1) {
+            if(sol->nbCtrVio == 0) {
                 if(zMax == -1 || zVois > zMax) {
                     zMax = zVois;
                     ind0Max = i;
@@ -181,10 +179,10 @@ int echange12(Solution* sol) {
 
                 zVois += sol->pb->cout[sol->var0[k]];
                 int rea = 0;
-                rea = majSommeCtr1(sol, sol->var0[k]);
+                majSommeCtr1(sol, sol->var0[k]);
 
                 // si la solution est réalisable, mise à jour
-                if(rea) {
+                if(sol->nbCtrVio == 0) {
 
                     if(zMax == -1 || zVois > zMax) { // amélioration de voisin trouvé
                         zMax = zVois;
@@ -277,7 +275,7 @@ int echangeAlea(Solution* sol, int k, int p) {
 
         indice = aleaBorne(0, sol->nbVar0-1);
         ind0[i] = sol->var0[indice];
-        rea = majSommeCtr1(sol, ind0[i]);
+        majSommeCtr1(sol, ind0[i]);
         sol->z += sol->pb->cout[ind0[i]];
         sol->nbVar0 --;
         sol->var0[indice] = sol->var0[sol->nbVar0];
@@ -285,7 +283,7 @@ int echangeAlea(Solution* sol, int k, int p) {
     }
 
 
-    if(rea) { // les changements sont gardés et finis
+    if(sol->nbCtrVio == 0) { // les changements sont gardés et finis
 
         for(int i = 0; i < k; i++) {
             sol->valeur[ind1[i]] = 0;
