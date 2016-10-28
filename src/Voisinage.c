@@ -36,7 +36,7 @@ void majSommeCtr0(Solution* sol, int ind) {
             sol->sommeCtr[indCtr] --;
 
             // la contrainte était peut-être violée
-            if(sol->sommeCtr[i] == 1) {
+            if(sol->sommeCtr[indCtr] == 1) {
                 sol->nbCtrVio --;
             }
         }
@@ -255,7 +255,7 @@ int echangeAlea(Solution* sol, int k, int p) {
     int *ind0 = malloc((long unsigned int)p*sizeof(int));
     int *ind1 = malloc((long unsigned int)k*sizeof(int));
 
-    int rea = 1;
+    int rea = 0;
 
     int indice;
 
@@ -272,19 +272,17 @@ int echangeAlea(Solution* sol, int k, int p) {
 
     // variables qui passent de 0 à 1
     for(int i = 0; i < p; i++) {
-
         indice = aleaBorne(0, sol->nbVar0-1);
         ind0[i] = sol->var0[indice];
         majSommeCtr1(sol, ind0[i]);
         sol->z += sol->pb->cout[ind0[i]];
         sol->nbVar0 --;
         sol->var0[indice] = sol->var0[sol->nbVar0];
-
     }
 
 
     if(sol->nbCtrVio == 0) { // les changements sont gardés et finis
-
+        rea = 1;
         for(int i = 0; i < k; i++) {
             sol->valeur[ind1[i]] = 0;
             sol->var0[sol->nbVar0] = ind1[i];
