@@ -13,6 +13,8 @@ int main(int argc, char* argv[]) {
 
     Probleme pb;
 
+    /* doute sur pb_200rnd0500.dat -> glpk trouve 183*/
+
     chargerProbleme(/*"test.txt"*/"../instances/pb_200rnd0500.dat", &pb);
 
     // afficherProbleme(&pb);
@@ -20,11 +22,8 @@ int main(int argc, char* argv[]) {
     Solution sol;
     creerSolution(&pb, &sol);
 
-    // constructionGloutonne(&sol);
-
-
-
-    /*printf("Solution gloutonne : \n");
+    /*constructionGloutonne(&sol);
+    printf("Solution gloutonne : \n");
     afficherSolution(&sol);*/
 
     /*int rea = 0;
