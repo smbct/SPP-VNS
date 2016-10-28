@@ -183,7 +183,6 @@ int echange12(Solution* sol) {
 
                 // si la solution est réalisable, mise à jour
                 if(sol->nbCtrVio == 0) {
-
                     if(zMax == -1 || zVois > zMax) { // amélioration de voisin trouvé
                         zMax = zVois;
                         ind1Max = i;
@@ -312,7 +311,6 @@ int echangeAlea(Solution* sol, int k, int p) {
         }
 
     }
-
 
     free(ind0);
     free(ind1);
