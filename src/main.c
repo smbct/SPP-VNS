@@ -13,16 +13,18 @@ int main(int argc, char* argv[]) {
 
     Probleme pb;
 
-    chargerProbleme(/*"test.txt"*/"../instances/pb_200rnd0700.dat", &pb);
+    chargerProbleme(/*"test.txt"*/"../instances/pb_200rnd0500.dat", &pb);
 
     // afficherProbleme(&pb);
 
     Solution sol;
     creerSolution(&pb, &sol);
 
-    /*constructionGloutonne(&sol);
+    // constructionGloutonne(&sol);
 
-    printf("Solution gloutonne : \n");
+
+
+    /*printf("Solution gloutonne : \n");
     afficherSolution(&sol);*/
 
     /*int rea = 0;
