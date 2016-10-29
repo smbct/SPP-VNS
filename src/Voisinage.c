@@ -321,7 +321,7 @@ int echangeAlea(Solution* sol, int k, int p) {
 //------------------------------------------------------------------------------
 int voisinAlea(Solution* sol, int k) {
 
-    int nbEssais = 0, essaisMax = 10; // parfois, il peut ne pas y avoir de voisin, on limite la recherche
+    int nbEssais = 0, essaisMax = 20; // parfois, il peut ne pas y avoir de voisin, on limite la recherche
     int realisable = 0;
 
     // détermination de k et p en fonction du niveau de voisinage
@@ -357,4 +357,101 @@ int voisinAlea(Solution* sol, int k) {
 //------------------------------------------------------------------------------
 int aleaBorne(int min, int max) {
     return min + rand()%(max-min+1);
+}
+
+//------------------------------------------------------------------------------
+int kpGenerique(int k, int p, Solution* sol) {
+
+    printf("kp : %d, %d\n", k, p);
+
+    int ameliore = 0;
+
+    kpEchange actuel, meilleur;
+    actuel.k = 0;
+    actuel.p = 0;
+    actuel.z = sol->z;
+    actuel.vark = malloc((long unsigned int)k*sizeof(int));
+    actuel.varp = malloc((long unsigned int)p*sizeof(int));
+
+    meilleur.z = -1;
+    meilleur.k = 0;
+    meilleur.p = 0;
+    meilleur.vark = malloc((long unsigned int)k*sizeof(int));
+    meilleur.varp = malloc((long unsigned int)p*sizeof(int));
+
+    kpGeneriqueRec(k, p, &actuel, sol, &meilleur);
+
+    // application des résultats si une amélioration a été faite
+    if(meilleur.z > sol->z) {
+        ameliore = 1;
+        sol->z = meilleur.z;
+        for(int i = 0; i < k; i++) {
+            sol->valeur[sol->var1[meilleur.vark[i]]] = 0;
+            majSommeCtr0(sol, sol->var1[meilleur.vark[i]]);
+            // réajustement des tableaux des indices de variables à 1 et à 0
+            sol->var0[sol->nbVar0] = sol->var1[meilleur.vark[i]];
+            sol->nbVar0 ++;
+            sol->nbVar1 --;
+            sol->var1[meilleur.vark[i]] = sol->var1[sol->nbVar1];
+        }
+        for(int i = 0; i < p; i++) {
+            sol->valeur[sol->var0[meilleur.varp[i]]] = 1;
+            majSommeCtr1(sol, sol->var1[meilleur.varp[i]]);
+            // réajustement des tableaux des indices de variables à 1 et à 0
+            sol->var1[sol->nbVar1] = sol->var0[meilleur.varp[i]];
+            sol->nbVar1 ++;
+            sol->nbVar0 --;
+            sol->var0[meilleur.varp[i]] = sol->var0[sol->nbVar0];
+        }
+
+    }
+
+    free(actuel.vark);
+    free(actuel.varp);
+    free(meilleur.vark);
+    free(meilleur.varp);
+
+    return ameliore;
+}
+
+//------------------------------------------------------------------------------
+void kpGeneriqueRec(int k, int p, kpEchange* actuel, Solution* sol, kpEchange* meilleur) {
+
+    if(actuel->k < k) { // réaffectation d'une variable affectée à 1 à 0
+        actuel->k ++;
+        for(int i = 0; i < sol->nbVar1-actuel->k; i++) {
+            actuel->vark[actuel->k-1] = i;
+            actuel->z -= sol->pb->cout[sol->var1[i]];
+            majSommeCtr0(sol, sol->var1[i]);
+            kpGeneriqueRec(k, p, actuel, sol, meilleur);
+            majSommeCtr1(sol, sol->var1[i]);
+            actuel->z += sol->pb->cout[sol->var1[i]];
+        }
+        actuel->k --;
+    } else if(actuel->p < p) { // réaffectation d'une variable affectée à 0 à 1
+        actuel->p ++;
+        for(int i = 0; i < sol->nbVar0-actuel->p; i++) {
+            actuel->varp[actuel->p-1] = i;
+            actuel->z += sol->pb->cout[sol->var0[i]];
+            majSommeCtr1(sol, sol->var0[i]);
+            kpGeneriqueRec(k, p, actuel, sol, meilleur);
+            majSommeCtr0(sol, sol->var0[i]);
+            actuel->z -= sol->pb->cout[sol->var0[i]];
+        }
+        actuel->p --;
+    } else { // tous les changements ont été fait, on peut tester la réalisibilité de la solution
+
+        // si cet échange est le meilleur trouvé, la solution est mise à jour
+        if(sol->nbCtrVio == 0 && (meilleur->z == -1 || actuel->z > meilleur->z)) {
+            meilleur->z = actuel->z;
+            for(int i = 0; i < actuel->k; i++) {
+                meilleur->vark[i] = actuel->vark[i];
+            }
+            for(int i = 0; i < actuel->p; i++) {
+                meilleur->varp[i] = actuel->varp[i];
+            }
+        }
+
+    }
+
 }
