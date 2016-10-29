@@ -79,6 +79,9 @@ int echange01(Solution* sol) {
         sol->nbVar1 ++;
         sol->nbVar0 --;
         sol->var0[ind0Max] = sol->var0[sol->nbVar0];
+
+        printf("z = %d\n", sol->z);
+        printf("p : %d\n\n", ind0Max);
     }
 
     return ameliore;
@@ -147,6 +150,10 @@ int echange11(Solution* sol) {
 
         // une amélioration de la fonction objectif a été faite
         ameliore = 1;
+
+        printf("z = %d\n", sol->z);
+        printf("k : %d\n", ind1Max);
+        printf("p : %d\n\n", ind0Max);
     }
 
     return ameliore;
@@ -234,6 +241,9 @@ int echange12(Solution* sol) {
         sol->nbVar0 --;
         sol->var0[ind0Max2] = sol->var0[sol->nbVar0];
 
+        printf("z = %d\n", sol->z);
+        printf("k : %d\n", ind1Max);
+        printf("p : %d, %d\n\n", ind0Max1, ind0Max2);
 
     }
 
@@ -321,7 +331,7 @@ int echangeAlea(Solution* sol, int k, int p) {
 //------------------------------------------------------------------------------
 int voisinAlea(Solution* sol, int k) {
 
-    int nbEssais = 0, essaisMax = 20; // parfois, il peut ne pas y avoir de voisin, on limite la recherche
+    int nbEssais = 0, essaisMax = 100; // parfois, il peut ne pas y avoir de voisin, on limite la recherche
     int realisable = 0;
 
     // détermination de k et p en fonction du niveau de voisinage
@@ -362,7 +372,7 @@ int aleaBorne(int min, int max) {
 //------------------------------------------------------------------------------
 int kpGenerique(int k, int p, Solution* sol) {
 
-    printf("kp : %d, %d\n", k, p);
+    // printf("kp : %d, %d\n", k, p);
 
     int ameliore = 0;
 
@@ -404,6 +414,18 @@ int kpGenerique(int k, int p, Solution* sol) {
             sol->var0[meilleur.varp[i]] = sol->var0[sol->nbVar0];
         }
 
+        // affichage des la sol retenue
+        printf("z = %d\n", sol->z);
+        printf("k : ");
+        for(int i = 0; i < k; i++) {
+            printf("%d, ", meilleur.vark[i]);
+        }
+        printf("\np : ");
+        for(int i = 0; i < p; i++) {
+            printf("%d, ", meilleur.varp[i]);
+        }
+        printf("\n\n");
+
     }
 
     free(actuel.vark);
@@ -419,7 +441,9 @@ void kpGeneriqueRec(int k, int p, kpEchange* actuel, Solution* sol, kpEchange* m
 
     if(actuel->k < k) { // réaffectation d'une variable affectée à 1 à 0
         actuel->k ++;
-        for(int i = 0; i < sol->nbVar1-actuel->k; i++) {
+        int deb = (actuel->k == 0 ? 0 : actuel->vark[actuel->k-2]+1);
+        int fin = sol->nbVar1-k+actuel->k;
+        for(int i = deb; i < fin; i++) {
             actuel->vark[actuel->k-1] = i;
             actuel->z -= sol->pb->cout[sol->var1[i]];
             majSommeCtr0(sol, sol->var1[i]);
@@ -430,7 +454,9 @@ void kpGeneriqueRec(int k, int p, kpEchange* actuel, Solution* sol, kpEchange* m
         actuel->k --;
     } else if(actuel->p < p) { // réaffectation d'une variable affectée à 0 à 1
         actuel->p ++;
-        for(int i = 0; i < sol->nbVar0-actuel->p; i++) {
+        int deb = (actuel->p == 0 ? 0 : actuel->varp[actuel->p-2]+1);
+        int fin = sol->nbVar0-p+actuel->p;
+        for(int i = deb; i < fin; i++) {
             actuel->varp[actuel->p-1] = i;
             actuel->z += sol->pb->cout[sol->var0[i]];
             majSommeCtr1(sol, sol->var0[i]);
@@ -449,6 +475,10 @@ void kpGeneriqueRec(int k, int p, kpEchange* actuel, Solution* sol, kpEchange* m
             }
             for(int i = 0; i < actuel->p; i++) {
                 meilleur->varp[i] = actuel->varp[i];
+            }
+
+            if(actuel->vark[0] == 41 && actuel->varp[0] == 60) {
+                printf("ok : %d\n\n", actuel->z);
             }
         }
 

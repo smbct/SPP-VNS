@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
     afficherSolution(&cpy);
     printf("valeur z = %d\n", cpy.z);*/
 
-    rechercheVNS(&sol);
+    rechercheVND(&sol);
 
     printf("Solution après VNS : \n");
     afficherSolution(&sol);

@@ -23,15 +23,16 @@ void rechercheVND(Solution* sol) {
     printf("z initial : %d\n", sol->z);
 
     int nbIter = 1;
-    while(k < 4) {
+    while(k <= 3) {
 
         ameliore = rechercheLocale(sol, k);
         fprintf(sortie, "%d %d %d %d\n", nbIter, sol->z, sol->z, sol->z);
 
-        printf("nbIter : %d, z : %d\n", nbIter, sol->z);
+        // printf("nbIter : %d, z : %d\n", nbIter, sol->z);
 
         if(ameliore) {
             k = 1;
+            printf("nouveau z : %d\n", sol->z);
         } else {
             k ++;
         }
