@@ -61,7 +61,9 @@ void rechercheVNS(Solution* sol) {
 
         k = 1;
 
-        while(k < 3) {
+        while(k <= 3) {
+
+            printf("nbIt : %d\n", nbIt);
 
             // on part de la solution actuelle qui est recopiée
             copierSolution(sol, &voisin);
@@ -88,7 +90,7 @@ void rechercheVNS(Solution* sol) {
             }
         }
 
-        printf("zMax : %d, nbIt : %d\n", sol->z, nbIt);
+        // printf("zMax : %d, nbIt : %d\n", sol->z, nbIt);
 
         nbIt ++;
     }
@@ -121,6 +123,21 @@ int rechercheLocale(Solution* sol, int k) {
             default:
                 break;
         }
+
+        /*switch(k) {
+            case 1:
+                ameliore = kpGenerique(0, 1, sol);
+                break;
+            case 2:
+                ameliore = kpGenerique(1, 1, sol);
+                break;
+            case 3:
+                ameliore = kpGenerique(1, 2, sol);
+                break;
+            default:
+                break;
+        }*/
+
 
         if(!amelioration && ameliore) {
             amelioration = 1;

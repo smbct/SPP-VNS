@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 
     /* doute sur pb_200rnd0500.dat -> glpk trouve 183*/
 
-    chargerProbleme(/*"test.txt"*/"../instances/pb_200rnd0500.dat", &pb);
+    chargerProbleme(/*"test.txt"*/"../instances/pb_200rnd0900.dat", &pb);
 
     // afficherProbleme(&pb);
 
@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
     afficherSolution(&cpy);
     printf("valeur z = %d\n", cpy.z);*/
 
-    rechercheVND(&sol);
+    rechercheVNS(&sol);
 
     printf("Solution après VNS : \n");
     afficherSolution(&sol);

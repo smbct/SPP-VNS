@@ -8,6 +8,19 @@
 
 #include "Solution.h"
 
+/**
+ * \brief enregistrement contenant les variables à échanger dans le mouvement
+ */
+typedef struct {
+
+    int k; // nombre de variable qui ont été passées de 1 à 0
+    int p; // nombre de variable qui ont été passées de 0 à 1
+
+    int* vark; // indices des variables passées de 1 à 0
+    int* varp; // indices des variables passées de 0 à 1
+
+    int z; // valeur de la fonction objectif après cet échange
+} kpEchange;
 
 /**
  * \brief recherche une amélioration de la solution avec un 0/1 échange
@@ -75,5 +88,9 @@ void echanger(int* val1, int* val2);
  * \return le nombre aléatoire
  */
 int aleaBorne(int min, int max);
+
+void kpGeneriqueRec(int k, int p, kpEchange* actuel, Solution* sol, kpEchange* meilleur);
+
+int kpGenerique(int k, int p, Solution* sol);
 
 #endif
