@@ -17,7 +17,7 @@ void rechercheVND(Solution* sol) {
     int ameliore;
 
 
-    FILE* sortie = fopen("../plot/out.res", "w");
+    FILE* sortie = fopen("plot/out.res", "w");
     constructionGloutonne(sol);
 
     printf("z initial : %d\n", sol->z);
@@ -47,9 +47,9 @@ void rechercheVND(Solution* sol) {
 void rechercheVNS(Solution* sol) {
 
     int k = 1;
-    int nbIt = 0, nbItMax = 1000;
+    int nbIt = 0, nbItMax = 500;
 
-    FILE* sortie = fopen("../plot/out.res", "w");
+    FILE* sortie = fopen("plot/out.res", "w");
 
     constructionGloutonne(sol);
 
@@ -64,7 +64,7 @@ void rechercheVNS(Solution* sol) {
 
         while(k <= 3) {
 
-            printf("nbIt : %d\n", nbIt);
+            // printf("nbIt : %d\n", nbIt);
 
             // on part de la solution actuelle qui est recopiée
             copierSolution(sol, &voisin);
@@ -81,7 +81,8 @@ void rechercheVNS(Solution* sol) {
             if(rea && voisin.z > sol->z) {
                 copierSolution(&voisin, sol);
                 k = 1;
-                nbItMax = nbIt + 1000; // critère d'arrêt : pas d'amélioration depuis une certain nombre d'itération
+                nbItMax = nbIt + 500; // critère d'arrêt : pas d'amélioration depuis une certain nombre d'itération
+                printf("z : %d\n", sol->z);
             } else {
                 k ++;
             }
@@ -89,11 +90,11 @@ void rechercheVNS(Solution* sol) {
             if(rea) {
                 fprintf(sortie, "%d %d %d %d\n", nbIt, initial, voisin.z, sol->z);
             }
+            nbIt ++;
         }
 
         // printf("zMax : %d, nbIt : %d\n", sol->z, nbIt);
 
-        nbIt ++;
     }
 
     detruireSolution(&voisin);
@@ -138,7 +139,6 @@ int rechercheLocale(Solution* sol, int k) {
             default:
                 break;
         }*/
-
 
         if(!amelioration && ameliore) {
             amelioration = 1;
