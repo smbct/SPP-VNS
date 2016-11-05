@@ -25,9 +25,17 @@ typedef struct {
 /**
  * \brief recherche une amélioration de la solution avec un 0/1 échange
  * \param sol la solution à améliorer
+ * \param alea indique si la solution choisie est aléatoire ou non
  * \return 1 ssi la solution a été améliorée
  */
 int echange01(Solution* sol);
+
+/**
+ * \brief pioche une solution aléatoire dans le voisinage 0/1
+ * \param sol la solution aléatoire, si possible
+ * \return 0 ssi aucune solution n'est réalisable
+ */
+int echange01Alea(Solution* sol);
 
 /**
  * \brief recherche une amélioration de la solution avec un 1/1 échange
@@ -37,11 +45,25 @@ int echange01(Solution* sol);
 int echange11(Solution* sol);
 
 /**
+ * \brief pioche une solution aléatoire dans le voisinage 1/1
+ * \param sol la solution aléatoire, si trouvée
+ * \return 0 ssi aucune solution n'est réalisable
+ */
+int echange11Alea(Solution* sol);
+
+/**
  * \brief recherche une amélioration de la solution avec un 1/2 échange
  * \param sol la solution à améliorer
  * \return 1 ssi la solution a été améliorée
  */
 int echange12(Solution* sol);
+
+/**
+ * \brief pioche une solution aléatoire dans le voisinage 1/2
+ * \param sol la solution aléatoire, si trouvée
+ * \return 0 ssi aucune solution n'est réalisable
+ */
+int echange12Alea(Solution* sol);
 
 /**
  * \bref effectue un echange aléatoire entre deux variables

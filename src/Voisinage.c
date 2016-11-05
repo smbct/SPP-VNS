@@ -48,6 +48,7 @@ void majSommeCtr0(Solution* sol, int ind) {
 
 //------------------------------------------------------------------------------
 int echange01(Solution* sol) {
+
     int zMax = -1;
     int zVois = sol->z;
 
@@ -58,9 +59,12 @@ int echange01(Solution* sol) {
         majSommeCtr1(sol, sol->var0[i]);
         zVois += sol->pb->cout[sol->var0[i]];
 
-        if(sol->nbCtrVio == 0 && (zMax == -1 || zVois > zMax)) {
-            zMax = zVois;
-            ind0Max = i;
+        if(sol->nbCtrVio == 0) {
+            if(zMax == -1 || zVois > zMax) {
+                zMax = zVois;
+                ind0Max = i;
+            }
+
         }
 
         zVois -= sol->pb->cout[sol->var0[i]];
@@ -79,12 +83,78 @@ int echange01(Solution* sol) {
         sol->nbVar1 ++;
         sol->nbVar0 --;
         sol->var0[ind0Max] = sol->var0[sol->nbVar0];
+        //
+        // printf("z = %d\n", sol->z);
+        // printf("p : %d\n\n", ind0Max);
 
-        printf("z = %d\n", sol->z);
-        printf("p : %d\n\n", ind0Max);
     }
 
     return ameliore;
+}
+
+//------------------------------------------------------------------------------
+int echange01Alea(Solution* sol) {
+
+    // chainage pour enregistrer les voisins réalisables (si on en choisit un au hasard)
+    typedef struct {
+        int ind0;
+        struct EchangeRea* suiv;
+        int z;
+    } EchangeRea;
+
+    EchangeRea* tete = NULL;
+    int nbRea = 0;
+
+    int zVois = sol->z;
+
+    for(int i = 0; i < sol->nbVar0; i++) { // une variable affectée à 0 est réaffectée à 1
+
+        majSommeCtr1(sol, sol->var0[i]);
+        zVois += sol->pb->cout[sol->var0[i]];
+
+        if(sol->nbCtrVio == 0) {
+            nbRea ++;
+            EchangeRea* echange = malloc(sizeof(EchangeRea));
+            echange->ind0 = i;
+            echange->z = zVois;
+            echange->suiv = tete;
+            tete = echange;
+        }
+
+        zVois -= sol->pb->cout[sol->var0[i]];
+        majSommeCtr0(sol, sol->var0[i]);
+
+    }
+
+    int realisable = (nbRea > 0);
+
+    if(realisable) {
+        // choix d'une solution aléatoire
+        int tirage = aleaBorne(1, nbRea);
+        EchangeRea* maillon = tete;
+        for(int i = 1; i < tirage; i++) {
+            maillon = maillon->suiv;
+        }
+
+        sol->z = maillon->z;
+        sol->valeur[sol->var0[maillon->ind0]] = 1;
+        majSommeCtr1(sol, sol->var0[maillon->ind0]);
+        sol->var1[sol->nbVar1] = sol->var0[maillon->ind0];
+        sol->nbVar1 ++;
+        sol->nbVar0 --;
+        sol->var0[maillon->ind0] = sol->var0[sol->nbVar0];
+    }
+
+    // libération de la mémoire
+    while(tete != NULL) {
+        EchangeRea*  aSup = tete;
+        tete = tete->suiv;
+        free(aSup);
+    }
+
+
+    return realisable;
+
 }
 
 //------------------------------------------------------------------------------
@@ -118,7 +188,6 @@ int echange11(Solution* sol) {
                     ind0Max = i;
                     ind1Max = j;
                 }
-
             }
 
             // dé mise à jour
@@ -151,12 +220,96 @@ int echange11(Solution* sol) {
         // une amélioration de la fonction objectif a été faite
         ameliore = 1;
 
-        printf("z = %d\n", sol->z);
-        printf("k : %d\n", ind1Max);
-        printf("p : %d\n\n", ind0Max);
+        // printf("z = %d\n", sol->z);
+        // printf("k : %d\n", ind1Max);
+        // printf("p : %d\n\n", ind0Max);
     }
 
     return ameliore;
+}
+
+//------------------------------------------------------------------------------
+int echange11Alea(Solution* sol) {
+
+    typedef struct {
+        int ind0; // indice de variable à affecter à 1
+        int ind1; // indice de variable à affecter à 0
+        int z;
+        struct EchangeRea* suiv;
+    } EchangeRea;
+
+    EchangeRea* tete = NULL;
+    int nbRea = 0;
+
+    int zVois = sol->z;
+
+    for(int i = 0; i < sol->nbVar0; i++) { // une variable affectée à 0 est réaffectée à 1
+
+        // la variable passe à 1
+        // mise à jour des somme des contraintes
+        majSommeCtr1(sol, sol->var0[i]);
+        zVois += sol->pb->cout[sol->var0[i]];
+
+        for(int j = 0; j < sol->nbVar1; j++) { // une variable affectée à 1 est réaffectée à 0
+
+            // la variable var0[i] passe à 1 et la variables var1[j] passe à 0
+
+            // test de réalisabilité et mise à jour des sommes en même temps
+            majSommeCtr0(sol, sol->var1[j]);
+            zVois -= sol->pb->cout[sol->var1[j]];
+
+            // si la solution est réalisable, on peut comparer la valeur du max
+            if(sol->nbCtrVio == 0) {
+                nbRea ++;
+                EchangeRea* maillon = malloc(sizeof(EchangeRea));
+                maillon->z = zVois;
+                maillon->ind0 = i;
+                maillon->ind1 = j;
+                maillon->suiv = tete;
+                tete = maillon;
+            }
+
+            // dé mise à jour
+            majSommeCtr1(sol, sol->var1[j]);
+            zVois += sol->pb->cout[sol->var1[j]];
+
+        }
+
+        // dé mise à jour de la somme des contraintes
+        majSommeCtr0(sol, sol->var0[i]);
+        zVois -= sol->pb->cout[sol->var0[i]];
+
+    }
+
+    int realisable = (nbRea > 0);
+
+    if(realisable) {
+
+        int tirage = aleaBorne(1, nbRea);
+        EchangeRea* choix = tete;
+        for(int i = 1; i < tirage; i++) {
+            choix = choix->suiv;
+        }
+
+        // mise à jour de la solution
+        sol->z = choix->z;
+        sol->valeur[sol->var0[choix->ind0]] = 1;
+        sol->valeur[sol->var1[choix->ind1]] = 0;
+
+        majSommeCtr1(sol, sol->var0[choix->ind0]);
+        majSommeCtr0(sol, sol->var1[choix->ind1]);
+
+        echanger(&sol->var0[choix->ind0], &sol->var1[choix->ind1]);
+
+        while(tete != NULL) {
+            EchangeRea* aSup = tete;
+            tete = tete->suiv;
+            free(aSup);
+        }
+    }
+
+    return realisable;
+
 }
 
 //------------------------------------------------------------------------------
@@ -196,7 +349,6 @@ int echange12(Solution* sol) {
                         ind0Max1 = j;
                         ind0Max2 = k;
                     }
-
                 }
 
                 zVois -= sol->pb->cout[sol->var0[k]];
@@ -241,13 +393,110 @@ int echange12(Solution* sol) {
         sol->nbVar0 --;
         sol->var0[ind0Max2] = sol->var0[sol->nbVar0];
 
-        printf("z = %d\n", sol->z);
-        printf("k : %d\n", ind1Max);
-        printf("p : %d, %d\n\n", ind0Max1, ind0Max2);
+        // printf("z = %d\n", sol->z);
+        // printf("k : %d\n", ind1Max);
+        // printf("p : %d, %d\n\n", ind0Max1, ind0Max2);
 
     }
 
     return ameliore;
+}
+
+//------------------------------------------------------------------------------
+int echange12Alea(Solution* sol) {
+
+    typedef struct {
+        int z;
+        int ind01;
+        int ind02;
+        int ind1;
+        struct EchangeRea* suiv;
+    } EchangeRea;
+
+
+    int zVois = sol->z;
+
+    EchangeRea* tete = NULL;
+    int nbRea = 0;
+
+    // une variable est passée de 1 à 0
+    for(int i = 0; i < sol->nbVar1; i++) {
+
+        zVois -= sol->pb->cout[sol->var1[i]];
+        majSommeCtr0(sol, sol->var1[i]);
+
+        // une première variables est passée de 0 à 1
+        for(int j = 0; j < sol->nbVar0-1; j++) {
+
+            zVois += sol->pb->cout[sol->var0[j]];
+            majSommeCtr1(sol, sol->var0[j]);
+
+            // une seconde variable est passée de 0 à 1
+            for(int k = j+1; k < sol->nbVar0; k++) {
+
+                zVois += sol->pb->cout[sol->var0[k]];
+                majSommeCtr1(sol, sol->var0[k]);
+
+                // si la solution est réalisable, mise à jour
+                if(sol->nbCtrVio == 0) {
+                    nbRea ++;
+                    EchangeRea* nouv = malloc(sizeof(EchangeRea));
+                    nouv->z = zVois;
+                    nouv->ind1 = i;
+                    nouv->ind01 = j;
+                    nouv->ind02 = k;
+                    nouv->suiv = tete;
+                    tete = nouv;
+                }
+
+                zVois -= sol->pb->cout[sol->var0[k]];
+                majSommeCtr0(sol, sol->var0[k]);
+
+            }
+
+            zVois -= sol->pb->cout[sol->var0[j]];
+            majSommeCtr0(sol, sol->var0[j]);
+
+        }
+
+        zVois += sol->pb->cout[sol->var1[i]];
+        majSommeCtr1(sol, sol->var1[i]);
+    }
+
+    int realisable = (nbRea > 0);
+
+    if(realisable) {
+
+        int tirage = aleaBorne(1, nbRea);
+        EchangeRea* choix = tete;
+        for(int i = 1; i < tirage; i++) {
+            choix = choix->suiv;
+        }
+
+        sol->valeur[sol->var1[choix->ind1]] = 0;
+        sol->valeur[sol->var0[choix->ind01]] = 1;
+        sol->valeur[sol->var0[choix->ind02]] = 1;
+
+        sol->z = choix->z;
+
+        majSommeCtr1(sol, sol->var0[choix->ind01]);
+        majSommeCtr1(sol, sol->var0[choix->ind02]);
+        majSommeCtr0(sol, sol->var1[choix->ind1]);
+
+        echanger(&sol->var0[choix->ind01], &sol->var1[choix->ind1]);
+        sol->var1[sol->nbVar1] = sol->var0[choix->ind02];
+        sol->nbVar1 ++;
+        sol->nbVar0 --;
+        sol->var0[choix->ind02] = sol->var0[sol->nbVar0];
+    }
+
+    while(tete != NULL) {
+        EchangeRea* aSup = tete;
+        tete = tete->suiv;
+        free(aSup);
+    }
+
+    return realisable;
 }
 
 //------------------------------------------------------------------------------
@@ -347,13 +596,28 @@ int voisinAlea(Solution* sol, int k) {
         nb1 = 2;
     }
 
-    while(!realisable && nbEssais < essaisMax) {
+    if(k == 1) {
+        realisable = echange01Alea(sol);
+    } else if(k == 2) {
+        realisable = echange11Alea(sol);
+    } else {
+        realisable = echange12Alea(sol);
+        // while(!realisable && nbEssais < essaisMax) {
+        //
+        //     realisable = echangeAlea(sol, nb0, nb1);
+        //     if(!realisable) {
+        //         nbEssais ++;
+        //     }
+        // }
+    }
+
+    /*while(!realisable && nbEssais < essaisMax) {
 
         realisable = echangeAlea(sol, nb0, nb1);
         if(!realisable) {
             nbEssais ++;
         }
-    }
+    }*/
 
     /*realisable = echangeAlea(sol, nb0, nb1);
     if(!realisable) {
