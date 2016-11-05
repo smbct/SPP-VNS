@@ -47,7 +47,7 @@ void rechercheVND(Solution* sol) {
 void rechercheVNS(Solution* sol) {
 
     int k = 1;
-    int nbIt = 0, nbItMax = 500;
+    int nbIt = 0, nbItMax = 100;
 
     FILE* sortie = fopen("plot/out.res", "w");
 
@@ -60,7 +60,7 @@ void rechercheVNS(Solution* sol) {
 
     while(nbIt < nbItMax) {
 
-        k = 1;
+        k = 1;²
 
         while(k <= 3) {
 
@@ -81,7 +81,7 @@ void rechercheVNS(Solution* sol) {
             if(rea && voisin.z > sol->z) {
                 copierSolution(&voisin, sol);
                 k = 1;
-                nbItMax = nbIt + 500; // critère d'arrêt : pas d'amélioration depuis une certain nombre d'itération
+                nbItMax = nbIt + 100; // critère d'arrêt : pas d'amélioration depuis une certain nombre d'itération
                 printf("z : %d\n", sol->z);
             } else {
                 k ++;
