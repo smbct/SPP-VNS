@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 
     /* doute sur pb_200rnd0500.dat -> glpk trouve 183*/
 
-    chargerProbleme("instances/pb_100rnd0700.dat"/*"test.txt"*//*"instances/pb_200rnd0900.dat"*/, &pb);
+    chargerProbleme("instances/pb_500rnd1500.dat"/*"test.txt"*//*"instances/pb_200rnd0900.dat"*/, &pb);
 
     // afficherProbleme(&pb);
 

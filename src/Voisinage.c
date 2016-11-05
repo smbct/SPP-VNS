@@ -128,6 +128,8 @@ int echange01Alea(Solution* sol) {
 
     int realisable = (nbRea > 0);
 
+    printf("nbRea 01 : %d\n", nbRea);
+
     if(realisable) {
         // choix d'une solution aléatoire
         int tirage = aleaBorne(1, nbRea);
@@ -282,6 +284,8 @@ int echange11Alea(Solution* sol) {
     }
 
     int realisable = (nbRea > 0);
+
+    printf("nbRea 11 : %d\n", nbRea);
 
     if(realisable) {
 
@@ -465,6 +469,8 @@ int echange12Alea(Solution* sol) {
 
     int realisable = (nbRea > 0);
 
+    printf("nbRea 1/2 : %d\n", nbRea);
+
     if(realisable) {
 
         int tirage = aleaBorne(1, nbRea);
@@ -538,7 +544,6 @@ int echangeAlea(Solution* sol, int k, int p) {
         sol->var0[indice] = sol->var0[sol->nbVar0];
     }
 
-
     if(sol->nbCtrVio == 0) { // les changements sont gardés et finis
         rea = 1;
         for(int i = 0; i < k; i++) {
@@ -580,21 +585,7 @@ int echangeAlea(Solution* sol, int k, int p) {
 //------------------------------------------------------------------------------
 int voisinAlea(Solution* sol, int k) {
 
-    int nbEssais = 0, essaisMax = 100; // parfois, il peut ne pas y avoir de voisin, on limite la recherche
-    int realisable = 0;
-
-    // détermination de k et p en fonction du niveau de voisinage
-    int nb0, nb1;
-    if(k == 1) {
-        nb0 = 0;
-        nb1 = 1; // une variable passe de 0 à 1
-    } else if(k == 2) {
-        nb0 = 1;
-        nb1 = 1;
-    } else {
-        nb0 = 1;
-        nb1 = 2;
-    }
+    int realisable = 0; // certains voisinages sont vides pour certaines solutions
 
     if(k == 1) {
         realisable = echange01Alea(sol);
@@ -602,28 +593,7 @@ int voisinAlea(Solution* sol, int k) {
         realisable = echange11Alea(sol);
     } else {
         realisable = echange12Alea(sol);
-        // while(!realisable && nbEssais < essaisMax) {
-        //
-        //     realisable = echangeAlea(sol, nb0, nb1);
-        //     if(!realisable) {
-        //         nbEssais ++;
-        //     }
-        // }
     }
-
-    /*while(!realisable && nbEssais < essaisMax) {
-
-        realisable = echangeAlea(sol, nb0, nb1);
-        if(!realisable) {
-            nbEssais ++;
-        }
-    }*/
-
-    /*realisable = echangeAlea(sol, nb0, nb1);
-    if(!realisable) {
-        reconstruireSolution(sol);
-        realisable = 1;
-    }*/
 
     return realisable;
 }
@@ -739,10 +709,6 @@ void kpGeneriqueRec(int k, int p, kpEchange* actuel, Solution* sol, kpEchange* m
             }
             for(int i = 0; i < actuel->p; i++) {
                 meilleur->varp[i] = actuel->varp[i];
-            }
-
-            if(actuel->vark[0] == 41 && actuel->varp[0] == 60) {
-                printf("ok : %d\n\n", actuel->z);
             }
         }
 
