@@ -128,7 +128,7 @@ int echange01Alea(Solution* sol) {
 
     int realisable = (nbRea > 0);
 
-    printf("nbRea 01 : %d\n", nbRea);
+    // printf("nbRea 01 : %d\n", nbRea);
 
     if(realisable) {
         // choix d'une solution aléatoire
@@ -285,7 +285,7 @@ int echange11Alea(Solution* sol) {
 
     int realisable = (nbRea > 0);
 
-    printf("nbRea 11 : %d\n", nbRea);
+    // printf("nbRea 11 : %d\n", nbRea);
 
     if(realisable) {
 
@@ -469,7 +469,7 @@ int echange12Alea(Solution* sol) {
 
     int realisable = (nbRea > 0);
 
-    printf("nbRea 1/2 : %d\n", nbRea);
+    // printf("nbRea 1/2 : %d\n", nbRea);
 
     if(realisable) {
 
@@ -583,7 +583,61 @@ int echangeAlea(Solution* sol, int k, int p) {
 }
 
 //------------------------------------------------------------------------------
-int voisinAlea(Solution* sol, int k) {
+int voisinAlea1(Solution* sol, int k) {
+
+    int realisable = 0;
+    int nbEssaisMax = 10, nbEssais = 1;
+
+    int nb1, nb0;
+
+    if(k == 1) {
+        nb1 = 0;
+        nb0 = 1;
+    } else if(k == 2) {
+        nb1 = 1;
+        nb0 = 1;
+    } else {
+        nb1 = 1;
+        nb0 = 2;
+    }
+
+    while(!realisable && nbEssais <= nbEssaisMax) {
+        realisable = echangeAlea(sol, nb1, nb0);
+        nbEssais ++;
+    }
+
+    return realisable;
+}
+
+//------------------------------------------------------------------------------
+int voisinAlea2(Solution* sol, int k) {
+
+    int realisable = 0;
+
+    int nb1, nb0;
+
+    if(k == 1) {
+        nb1 = 0;
+        nb0 = 1;
+    } else if(k == 2) {
+        nb1 = 1;
+        nb0 = 1;
+    } else {
+        nb1 = 1;
+        nb0 = 2;
+    }
+
+    realisable = echangeAlea(sol, nb1, nb0);
+
+    if(!realisable) {
+        reconstruireSolution(sol);
+    }
+
+    return 1;
+}
+
+//------------------------------------------------------------------------------
+int voisinAlea3(Solution* sol, int k) {
 
     int realisable = 0; // certains voisinages sont vides pour certaines solutions
 
@@ -649,16 +703,16 @@ int kpGenerique(int k, int p, Solution* sol) {
         }
 
         // affichage des la sol retenue
-        printf("z = %d\n", sol->z);
-        printf("k : ");
-        for(int i = 0; i < k; i++) {
-            printf("%d, ", meilleur.vark[i]);
-        }
-        printf("\np : ");
-        for(int i = 0; i < p; i++) {
-            printf("%d, ", meilleur.varp[i]);
-        }
-        printf("\n\n");
+        // printf("z = %d\n", sol->z);
+        // printf("k : ");
+        // for(int i = 0; i < k; i++) {
+        //     printf("%d, ", meilleur.vark[i]);
+        // }
+        // printf("\np : ");
+        // for(int i = 0; i < p; i++) {
+        //     printf("%d, ", meilleur.varp[i]);
+        // }
+        // printf("\n\n");
 
     }
 
