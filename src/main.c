@@ -6,49 +6,54 @@
 #include "Voisinage.h"
 #include "VNS.h"
 
-//------------------------------------------------------------------------------
-int main(int argc, char* argv[]) {
-
-    srand((unsigned int)time(NULL));
-
-    Probleme pb;
-
-    /* doute sur pb_200rnd0500.dat -> glpk trouve 183*/
-
-    chargerProbleme("instances/pb_500rnd1500.dat"/*"test.txt"*//*"instances/pb_200rnd0900.dat"*/, &pb);
-
-    // afficherProbleme(&pb);
+void resoudre(Probleme* pb, int option) {
 
     Solution sol;
-    creerSolution(&pb, &sol);
+    creerSolution(pb, &sol);
 
-    /*constructionGloutonne(&sol);
-    printf("Solution gloutonne : \n");
-    afficherSolution(&sol);*/
+    if(option == 1) {
+        rechercheVND(&sol);
+    } else if(option == 2) {
+        rechercheVNS(&sol, 1);
+    } else if(option == 3) {
+        rechercheVNS(&sol, 2);
+    } else {
+        rechercheVNS(&sol, 3);
+    }
 
-    /*int rea = 0;
-    Solution cpy;
-    creerSolution(&pb, &cpy);
-    copierSolution(&sol, &cpy);
-    int nbIt = 0;
-    do {
-        rea = echangeAlea(&cpy, 1, 1);
-        nbIt ++;
-    } while(!rea);
-    printf("nbIt : %d\n", nbIt);
-    afficherSolution(&cpy);
-    printf("valeur z = %d\n", cpy.z);*/
-
-    rechercheVNS(&sol);
-
-    printf("Solution après VNS : \n");
-    afficherSolution(&sol);
-    printf("valeur z = %d\n", sol.z);
+    printf("%d\n", sol.z);
 
     // destruction de la solution
     detruireSolution(&sol);
+}
 
-    detruireProbleme(&pb);
+//------------------------------------------------------------------------------
+int main(int argc, char* argv[]) {
+
+    if(argc > 1) {
+
+        srand((unsigned int)time(NULL));
+
+        Probleme pb;
+
+        /* doute sur pb_200rnd0500.dat -> glpk trouve 183*/
+
+        // chargerProbleme(/*"instances/pb_500rnd1500.dat"*//*"test.txt"*//*"instances/pb_200rnd0900.dat"*/, &pb);
+        chargerProbleme(argv[1], &pb);
+
+        // afficherProbleme(&pb);
+
+        resoudre(&pb, 3);
+
+        // printf("Solution après VNS : \n");
+        // afficherSolution(&sol);
+
+        detruireProbleme(&pb);
+
+    } else {
+        printf("Erreur, pas d'instance en entrée\n");
+    }
+
 
     return 0;
 

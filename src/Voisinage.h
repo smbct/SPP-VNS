@@ -75,12 +75,29 @@ int echange12Alea(Solution* sol);
 int echangeAlea(Solution* sol, int k, int p);
 
 /**
- * \brief recherche un voisin aléatoire en fonction du niveau de voisinage
+ * \brief recherche un voisin aléatoire en fonction du niveau de voisinage en générant le voisinage
  * \param sol la solution actuelle, le voisin aléatoire s'il a été trouvé
  * \param k le niveau de voisinage choisi
  * \return 1 ssi un voisin réalisable a été trouvé
  */
-int voisinAlea(Solution* sol, int k);
+int voisinAlea3(Solution* sol, int k);
+
+/**
+ * \brief recherche un voisin aléatoire en reconstruisant la solution s'il n'est pas réalisable
+ * \param sol la solution actuelle, le voisin aléatoire s'il a été trouvé
+ * \param k le niveau de voisinage choisi
+ * \return 1 ssi un voisin réalisable a été trouvé
+ */
+int voisinAlea2(Solution* sol, int k);
+
+
+/**
+ * \brief recherche un voisin aléatoire en faisant plusieurs tentative pour trouver une solution réalisable
+ * \param sol la solution actuelle, le voisin aléatoire s'il a été trouvé
+ * \param k le niveau de voisinage choisi
+ * \return 1 ssi un voisin réalisable a été trouvé
+ */
+int voisinAlea1(Solution* sol, int k);
 
 /**
  * \brief met à jour la somme sur les contraintes pour la passage d'une variable de 0 à 1

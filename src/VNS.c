@@ -17,34 +17,34 @@ void rechercheVND(Solution* sol) {
     int ameliore;
 
 
-    FILE* sortie = fopen("plot/out.res", "w");
+    // FILE* sortie = fopen("plot/out.res", "w");
     constructionGloutonne(sol);
 
-    printf("z initial : %d\n", sol->z);
+    // printf("z initial : %d\n", sol->z);
 
     int nbIter = 1;
     while(k <= 3) {
 
         ameliore = rechercheLocale(sol, k);
-        fprintf(sortie, "%d %d %d %d\n", nbIter, sol->z, sol->z, sol->z);
+        // fprintf(sortie, "%d %d %d %d\n", nbIter, sol->z, sol->z, sol->z);
 
         // printf("nbIter : %d, z : %d\n", nbIter, sol->z);
 
         if(ameliore) {
             k = 1;
-            printf("nouveau z : %d\n", sol->z);
+            // printf("nouveau z : %d\n", sol->z);
         } else {
             k ++;
         }
         nbIter ++;
     }
 
-    fclose(sortie);
+    // fclose(sortie);
 }
 
 
 //------------------------------------------------------------------------------
-void rechercheVNS(Solution* sol) {
+void rechercheVNS(Solution* sol, int option) {
 
     int k = 1;
     int nbIt = 0, nbItMax = 100;
@@ -53,14 +53,14 @@ void rechercheVNS(Solution* sol) {
 
     constructionGloutonne(sol);
 
-    printf("z initial : %d\n", sol->z);
+    // printf("z initial : %d\n", sol->z);
 
     Solution voisin;
     creerSolution(sol->pb, &voisin);
 
     while(nbIt < nbItMax) {
 
-        k = 1;²
+        k = 1;
 
         while(k <= 3) {
 
@@ -70,7 +70,14 @@ void rechercheVNS(Solution* sol) {
             copierSolution(sol, &voisin);
 
             // choix d'un voisin aléatoire
-            int rea = voisinAlea(&voisin, k);
+            int rea = 0;
+            if(option == 1) {
+                rea = voisinAlea1(&voisin, k);
+            } else if(option == 2) {
+                rea = voisinAlea2(&voisin, k);
+            } else {
+                rea = voisinAlea3(&voisin, k);
+            }
             int initial = voisin.z;
 
             // recherche locale sur ce voisin
@@ -82,7 +89,7 @@ void rechercheVNS(Solution* sol) {
                 copierSolution(&voisin, sol);
                 k = 1;
                 nbItMax = nbIt + 100; // critère d'arrêt : pas d'amélioration depuis une certain nombre d'itération
-                printf("z : %d\n", sol->z);
+                // printf("z : %d\n", sol->z);
             } else {
                 k ++;
             }
