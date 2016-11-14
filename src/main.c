@@ -30,7 +30,7 @@ void resoudre(Probleme* pb, int option) {
 //------------------------------------------------------------------------------
 int main(int argc, char* argv[]) {
 
-    if(argc > 1) {
+    // if(argc > 1) {
 
         srand((unsigned int)time(NULL));
 
@@ -38,21 +38,24 @@ int main(int argc, char* argv[]) {
 
         /* doute sur pb_200rnd0500.dat -> glpk trouve 183*/
 
-        // chargerProbleme(/*"instances/pb_500rnd1500.dat"*//*"test.txt"*//*"instances/pb_200rnd0900.dat"*/, &pb);
-        chargerProbleme(argv[1], &pb);
+        chargerProbleme("instances/pb_100rnd0100.dat"/*"instances/pb_500rnd1500.dat"*//*"test.txt"*//*"instances/pb_200rnd0900.dat"*/, &pb);
+        // chargerProbleme(argv[1], &pb);
 
         // afficherProbleme(&pb);
 
-        resoudre(&pb, 3);
+        Solution sol;
+        creerSolution(&pb, &sol);
 
-        // printf("Solution après VNS : \n");
-        // afficherSolution(&sol);
+        rechercheVNS(&sol, 3);
+
+        printf("Solution après VNS : \n");
+        afficherSolution(&sol);
 
         detruireProbleme(&pb);
 
-    } else {
-        printf("Erreur, pas d'instance en entrée\n");
-    }
+    // } else {
+        // printf("Erreur, pas d'instance en entrée\n");
+    // }
 
 
     return 0;
