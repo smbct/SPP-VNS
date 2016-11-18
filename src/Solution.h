@@ -17,7 +17,6 @@ typedef struct {
     int* var1; // liste des indices des variables à 1
     int nbVar0; // nombre de variables à 0
     int nbVar1; // nombre de variable à 1
-    double* utilite; // utilité des variables
     Probleme* pb; // pointeur vers l'instance du problème
     int nbCtrVio; // nombre de contraintes violées
 }  Solution;
@@ -54,13 +53,6 @@ void majSommeCtr1(Solution* sol, int ind);
  * \param ind l'indice de la variable à passer à 0
  */
 void majSommeCtr0(Solution* sol, int ind);
-
-/**
- * \brief calcul de l'utilité d'une variable
- * \param pb l'instance du problème SPP
- * \param var l'indice de la variable dont on calcule l'utilité
- */
-double calculerUtilite(Probleme* pb, int var);
 
 /**
  * \brief construction d'une solution gloutonne pour le problème

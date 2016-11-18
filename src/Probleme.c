@@ -86,6 +86,12 @@ void chargerProbleme(char* nom, Probleme *probleme) {
             }
         }
 
+        // initialisation du tableau d'utilité
+        probleme->utilite = malloc((long unsigned int)probleme->nbVar*sizeof(double));
+        for(int var = 0; var < probleme->nbVar; var++) {
+            probleme->utilite[var] = calculerUtilite(probleme, var);
+        }
+
         /*printf("liste var - ctr : \n");
         for(int i = 0; i < probleme->nbVar; i++) {
             printf("%d : ", i);
@@ -122,6 +128,8 @@ void detruireProbleme(Probleme* probleme) {
     }
 
     free(probleme->contrainte);
+
+    free(probleme->utilite);
 }
 
 //------------------------------------------------------------------------------
@@ -140,4 +148,17 @@ void afficherProbleme(Probleme* probleme) {
         printf("\n");
     }
 
+}
+
+//------------------------------------------------------------------------------
+double calculerUtilite(Probleme* pb, int var) {
+    int somme = 0;
+
+    for(int i = 0; i < pb->nbCtr; i++) {
+        if(pb->contrainte[i][var] == 1) {
+            somme ++;
+        }
+    }
+
+    return (double)pb->cout[var]/(double)somme;
 }

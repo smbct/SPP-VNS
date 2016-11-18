@@ -96,19 +96,6 @@ void majSommeCtr0(Solution* sol, int ind) {
 }
 
 //------------------------------------------------------------------------------
-double calculerUtilite(Probleme* pb, int var) {
-    int somme = 0;
-
-    for(int i = 0; i < pb->nbCtr; i++) {
-        if(pb->contrainte[i][var] == 1) {
-            somme ++;
-        }
-    }
-
-    return (double)pb->cout[var]/(double)somme;
-}
-
-//------------------------------------------------------------------------------
 void constructionGloutonne(Solution* sol) {
 
     // initialisation des solutions
@@ -116,11 +103,10 @@ void constructionGloutonne(Solution* sol) {
         sol->valeur[indVar] = 0;
     }
 
-    // calcule des utilité
-    double* utilite = malloc(((long unsigned int)sol->pb->nbVar)*sizeof(double));
-
-    for(int indVar = 0; indVar < sol->pb->nbVar; indVar ++) {
-         utilite[indVar] = calculerUtilite(sol->pb, indVar);
+    // tableau des variables qui ne peuvent plus être sélectionnée
+    int* inutilisable = malloc((long unsigned int)sol->pb->nbVar*sizeof(int));
+    for(int i = 0; i < sol->pb->nbVar; i++) {
+        inutilisable[i] = 0;
     }
 
     int nbVarRestant = sol->pb->nbVar;
@@ -132,17 +118,16 @@ void constructionGloutonne(Solution* sol) {
         double uMax = -1;
         int indMax = -1;
 
-        // les utiliés à -1 sont celles pour lesquelles la variable ne peut plus être ajoutée
         for(int indVar = 0; indVar < sol->pb->nbVar; indVar++) {
-            if( (uMax == -1 && utilite[indVar] >= 0) || utilite[indVar] > uMax) {
-                uMax = utilite[indVar];
+            if(!inutilisable[indVar] && (uMax == -1 || sol->pb->utilite[indVar] > uMax)) {
+                uMax = sol->pb->utilite[indVar];
                 indMax = indVar;
             }
         }
 
         // affectation de la variable à 1
         sol->valeur[indMax] = 1;
-        utilite[indMax] = -1; // la variable n'est plus sélectionnable
+        inutilisable[indMax] = 1; // la variable n'est plus sélectionnable
         nbVarRestant --;
 
         // suppression des variables ne pouvant plus être affectées à 1
@@ -150,8 +135,8 @@ void constructionGloutonne(Solution* sol) {
             if(sol->pb->contrainte[indCtr][indMax] == 1) {
                 // parcours des variables apparaissant dans la contrainte
                 for(int indVar = 0; indVar < sol->pb->nbVar; indVar ++) {
-                    if(sol->pb->contrainte[indCtr][indVar] == 1 && utilite[indVar] >= 0) {
-                        utilite[indVar] = -1;
+                    if(sol->pb->contrainte[indCtr][indVar] == 1 && !inutilisable[indVar]) {
+                        inutilisable[indVar] = 1;
                         nbVarRestant --;
                     }
                 }
@@ -159,7 +144,7 @@ void constructionGloutonne(Solution* sol) {
         }
     }
 
-    free(utilite);
+    free(inutilisable);
 
     initialiserZ(sol);
     initialiserListeIndices(sol);
@@ -214,7 +199,6 @@ void creerSolution(Probleme* pb, Solution* sol) {
     sol->sommeCtr = malloc(((long unsigned int)pb->nbCtr)*sizeof(int));
     sol->var0 = malloc(((long unsigned int)pb->nbVar)*sizeof(int));
     sol->var1 = malloc(((long unsigned int)pb->nbVar)*sizeof(int));
-    sol->utilite = malloc(((long unsigned int)pb->nbVar)*sizeof(double));
     sol->pb = pb; // initialisation du pointeur vers l'instance
     sol->nbCtrVio = 0;
 }
@@ -235,12 +219,11 @@ void reconstruireSolution(Solution* sol) {
                 for(int var = 0; var < sol->pb->nbVar; var++) {
                     if(sol->valeur[var] == 1 && sol->pb->contrainte[indCtr][var] == 1) {
                         // mise à jour de l'utilité minimale trouvée
-                        if(varMin == -1 || sol->utilite[varMin] < sol->utilite[var]) {
+                        if(varMin == -1 || sol->pb->utilite[varMin] < sol->pb->utilite[var]) {
                             varMin = var;
                         }
                     }
                 }
-
             }
         }
 
@@ -273,11 +256,8 @@ void reconstruireSolution(Solution* sol) {
                 }
                 sol->sommeCtr[indCtr] --;
             }
-
         }
-
     }
-
 }
 
 //------------------------------------------------------------------------------
@@ -384,5 +364,4 @@ void detruireSolution(Solution* sol) {
     free(sol->sommeCtr);
     free(sol->var0);
     free(sol->var1);
-    free(sol->utilite);
 }
