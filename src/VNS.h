@@ -29,4 +29,9 @@ void rechercheVNS(Solution* sol, int option);
  */
 int rechercheLocale(Solution* sol, int k);
 
+/**
+ * TODO
+ */
+void path_relinking(Solution* best , Solution* worst);
+
 #endif // VNS_H

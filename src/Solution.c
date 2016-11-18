@@ -61,6 +61,41 @@ void initialiserListeIndices(Solution* sol) {
 }
 
 //------------------------------------------------------------------------------
+void majSommeCtr1(Solution* sol, int ind) {
+
+    // mise à jour des sommes des contraintes
+    for(int i = 0; i < sol->pb->nbCtrVar[ind]; i++) {
+        int indCtr = sol->pb->ctrVar[ind][i];
+
+        if(sol->pb->contrainte[indCtr][ind] == 1) {
+            sol->sommeCtr[indCtr] ++;
+
+            if(sol->sommeCtr[indCtr] == 2) { // la contrainte est désormais violée
+                sol->nbCtrVio ++;
+            }
+        }
+    }
+
+}
+
+//------------------------------------------------------------------------------
+void majSommeCtr0(Solution* sol, int ind) {
+
+    // mise à jour des sommes des contraintes
+    for(int i = 0; i < sol->pb->nbCtrVar[ind]; i++) {
+        int indCtr = sol->pb->ctrVar[ind][i];
+        if(sol->pb->contrainte[indCtr][ind] == 1) {
+            sol->sommeCtr[indCtr] --;
+
+            // la contrainte était peut-être violée
+            if(sol->sommeCtr[indCtr] == 1) {
+                sol->nbCtrVio --;
+            }
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
 double calculerUtilite(Probleme* pb, int var) {
     int somme = 0;
 
@@ -242,6 +277,104 @@ void reconstruireSolution(Solution* sol) {
         }
 
     }
+
+}
+
+//------------------------------------------------------------------------------
+void constructionGloutonneInverse(Solution* sol) {
+
+    // initialisation des solutions
+    for(int indVar = 0; indVar < sol->pb->nbVar; indVar ++) {
+        sol->valeur[indVar] = 0;
+    }
+
+    // calcule des utilité
+    double* utilite = malloc(((long unsigned int)sol->pb->nbVar)*sizeof(double));
+
+    for(int indVar = 0; indVar < sol->pb->nbVar; indVar ++) {
+         utilite[indVar] = calculerUtilite(sol->pb, indVar);
+    }
+
+    int nbVarRestant = sol->pb->nbVar;
+
+    // des objets sont ajoutés à la solution tant que possible
+    while(nbVarRestant > 0) {
+
+        // recherche de l'utilité max
+        double uMax = -1;
+        int indMax = -1;
+
+        // les utiliés à -1 sont celles pour lesquelles la variable ne peut plus être ajoutée
+        for(int indVar = 0; indVar < sol->pb->nbVar; indVar++) {
+            if( (uMax == -1 && utilite[indVar] >= 0) || utilite[indVar] < uMax) {
+                uMax = utilite[indVar];
+                indMax = indVar;
+            }
+        }
+
+        // affectation de la variable à 1
+        sol->valeur[indMax] = 1;
+        utilite[indMax] = -1; // la variable n'est plus sélectionnable
+        nbVarRestant --;
+
+        // suppression des variables ne pouvant plus être affectées à 1
+        for(int indCtr = 0; indCtr < sol->pb->nbCtr; indCtr ++) {
+            if(sol->pb->contrainte[indCtr][indMax] == 1) {
+                // parcours des variables apparaissant dans la contrainte
+                for(int indVar = 0; indVar < sol->pb->nbVar; indVar ++) {
+                    if(sol->pb->contrainte[indCtr][indVar] == 1 && utilite[indVar] >= 0) {
+                        utilite[indVar] = -1;
+                        nbVarRestant --;
+                    }
+                }
+            }
+        }
+    }
+
+    free(utilite);
+
+    initialiserZ(sol);
+    initialiserListeIndices(sol);
+    initialiserSommeCtr(sol);
+}
+
+//------------------------------------------------------------------------------
+void passerVariable1(Solution* sol, int indice) {
+
+    // màj de la valeur de l'objectif
+    sol->z += sol->pb->cout[sol->var0[indice]];
+
+    // màj de la valeur de la variable
+    sol->valeur[sol->var0[indice]] = 1;
+
+    // màj des contraintes
+    majSommeCtr1(sol, sol->var0[indice]);
+
+    // màj des tableaux d'indice de variables à 0 et à 1
+    sol->var1[sol->nbVar1] = sol->var0[indice];
+    sol->nbVar1 ++;
+    sol->nbVar0 --;
+    sol->var0[indice] = sol->var0[sol->nbVar0];
+
+}
+
+//------------------------------------------------------------------------------
+void passerVariable0(Solution* sol, int indice) {
+
+    // màj de la valeur de l'objectif
+    sol->z -= sol->pb->cout[sol->var1[indice]];
+
+    // màj de la valeur de la variable
+    sol->valeur[sol->var1[indice]] = 0;
+
+    // màj des contraintes
+    majSommeCtr0(sol, sol->var1[indice]);
+
+    // màj des tableaux d'indice de variables à 0 et à 1
+    sol->var0[sol->nbVar0] = sol->var1[indice];
+    sol->nbVar0 ++;
+    sol->nbVar1 --;
+    sol->var1[indice] = sol->var1[sol->nbVar1];
 
 }
 

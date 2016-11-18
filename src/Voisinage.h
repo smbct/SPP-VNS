@@ -100,20 +100,6 @@ int voisinAlea2(Solution* sol, int k);
 int voisinAlea1(Solution* sol, int k);
 
 /**
- * \brief met à jour la somme sur les contraintes pour la passage d'une variable de 0 à 1
- * \param sol la solution modifiée
- * \param ind l'indice de la variable à passer à 1
- */
-void majSommeCtr1(Solution* sol, int ind);
-
-/**
- * \brief met à jour la somme sur les contraintes pour la passage d'une variable de 1 à 0
- * \param sol la solution modifiée
- * \param ind l'indice de la variable à passer à 0
- */
-void majSommeCtr0(Solution* sol, int ind);
-
-/**
  * \brief echange deux valeurs
  * \param val1 pointeur vers la première valeur
  * \param val2 pointeur vers la deuxième valeur

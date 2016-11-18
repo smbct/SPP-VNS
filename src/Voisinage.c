@@ -9,44 +9,6 @@
 #include "Voisinage.h"
 
 //------------------------------------------------------------------------------
-void majSommeCtr1(Solution* sol, int ind) {
-
-    // mise à jour des sommes des contraintes
-    for(int i = 0; i < sol->pb->nbCtrVar[ind]; i++) {
-        int indCtr = sol->pb->ctrVar[ind][i];
-
-        if(sol->pb->contrainte[indCtr][ind] == 1) {
-            sol->sommeCtr[indCtr] ++;
-
-            if(sol->sommeCtr[indCtr] == 2) { // la contrainte est désormais violée
-                sol->nbCtrVio ++;
-            }
-        }
-    }
-
-}
-
-//------------------------------------------------------------------------------
-void majSommeCtr0(Solution* sol, int ind) {
-
-    // mise à jour des sommes des contraintes
-    for(int i = 0; i < sol->pb->nbCtrVar[ind]; i++) {
-        int indCtr = sol->pb->ctrVar[ind][i];
-        if(sol->pb->contrainte[indCtr][ind] == 1) {
-            sol->sommeCtr[indCtr] --;
-
-            // la contrainte était peut-être violée
-            if(sol->sommeCtr[indCtr] == 1) {
-                sol->nbCtrVio --;
-            }
-        }
-
-    }
-
-
-}
-
-//------------------------------------------------------------------------------
 int echange01(Solution* sol) {
 
     int zMax = -1;
