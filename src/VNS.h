@@ -32,6 +32,6 @@ int rechercheLocale(Solution* sol, int k);
 /**
  * TODO
  */
-void path_relinking(Solution* best , Solution* worst);
+void path_relinking(Solution* best , Solution* worst, Solution* nouv);
 
 #endif // VNS_H

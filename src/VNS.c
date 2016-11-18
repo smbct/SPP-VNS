@@ -157,13 +157,12 @@ int rechercheLocale(Solution* sol, int k) {
 }
 
 //--------------------------------------------------------------------------------
-void path_relinking(Solution* best , Solution* worst) {
-    constructionGloutonne(best);
-    constructionGloutonneInverse(worst);
+void path_relinking(Solution* best , Solution* worst, Solution* nouv) {
 
-    Solution bestPrim ;
+    int moinsBon = (best->z < worst->z ? best->z : worst->z);
+
+    /*Solution bestPrim ;
     creerSolution(best->pb, &bestPrim);
-
     Solution worstPrim;
     creerSolution(best->pb, &worstPrim);
 
@@ -193,6 +192,31 @@ void path_relinking(Solution* best , Solution* worst) {
             }
         }
 
+    }*/
+
+    Solution temp;
+    creerSolution(worst->pb, &temp);
+
+    for(int i = 0; i < worst->nbVar0; i ++) {
+        // différence entre best et val, la solution est modifiée
+        if(best->valeur[worst->var0[i]] == 1) {
+            passerVariable1(worst, i);
+            copierSolution(worst, &temp);
+
+            if(temp.nbCtrVio > 0) {
+                reconstruireSolution(&temp);
+            }
+
+            if(temp.z > moinsBon) {
+                rechercheVNS(&temp, 3);
+                moinsBon = temp.z;
+                if(temp.z > nouv->z) {
+                    copierSolution(&temp, nouv);
+                }
+            }
+        }
     }
+
+    detruireSolution(&temp);
 
 }

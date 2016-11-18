@@ -14,6 +14,7 @@ typedef struct {
     int** contrainte; // matrice des contraintes
     int* nbCtrVar; // nombre de contrainte dans laquelle apparait chaque variables
     int** ctrVar; // contraintes dans lesquelles chaque variable apparait
+    double* utilite; // utilité des variables
 } Probleme;
 
 /**
@@ -34,5 +35,12 @@ void detruireProbleme(Probleme* probleme);
  * \param probleme l'instance à afficher
  */
 void afficherProbleme(Probleme* probleme);
+
+/**
+ * \brief calcul de l'utilité d'une variable
+ * \param pb l'instance du problème SPP
+ * \param var l'indice de la variable dont on calcule l'utilité
+ */
+double calculerUtilite(Probleme* pb, int var);
 
 #endif // PROBLEME_H
