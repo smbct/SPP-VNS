@@ -42,6 +42,20 @@ void initialiserSommeCtr(Solution* sol);
 void initialiserListeIndices(Solution* sol);
 
 /**
+ * \brief met à jour la somme sur les contraintes pour la passage d'une variable de 0 à 1
+ * \param sol la solution modifiée
+ * \param ind l'indice de la variable à passer à 1
+ */
+void majSommeCtr1(Solution* sol, int ind);
+
+/**
+ * \brief met à jour la somme sur les contraintes pour la passage d'une variable de 1 à 0
+ * \param sol la solution modifiée
+ * \param ind l'indice de la variable à passer à 0
+ */
+void majSommeCtr0(Solution* sol, int ind);
+
+/**
  * \brief calcul de l'utilité d'une variable
  * \param pb l'instance du problème SPP
  * \param var l'indice de la variable dont on calcule l'utilité
@@ -53,6 +67,11 @@ double calculerUtilite(Probleme* pb, int var);
  * \param sol la solution retournée
  */
 void constructionGloutonne(Solution* sol);
+
+/**
+ * TODO
+ */
+void constructionGloutonneInverse(Solution* sol);
 
 
 /**
@@ -71,7 +90,7 @@ void creerSolution(Probleme* pb, Solution* sol);
 /**
  * \brief copie d'une solution
  * \param sol la solution à copier
- * \param copie la copie de la solution
+ * \param copie la solution dans copie
  */
 void copierSolution(Solution* sol, Solution* copie);
 
@@ -86,6 +105,20 @@ void reconstruireSolution(Solution* sol);
  * \param sol la solution à désallouer
  */
 void detruireSolution(Solution* sol);
+
+/**
+ * \brief passage d'une variable de 0 à 1 dans la solution
+ * \param sol la solution à modifier
+ * \param indice l'indice dans le tableau d'indice des variables à 0 à modifier
+ */
+void passerVariable1(Solution* sol, int indice);
+
+/**
+ * \brief passage d'une variable de 1 à 0 dans la solution
+ * \param sol la solution à modifier
+ * \param indice l'indice dans le tableau d'indice des variables à 1 à modifier
+ */
+void passerVariable0(Solution* sol, int indice);
 
 
 #endif // SOLUTION_H

@@ -155,3 +155,44 @@ int rechercheLocale(Solution* sol, int k) {
 
     return amelioration;
 }
+
+//--------------------------------------------------------------------------------
+void path_relinking(Solution* best , Solution* worst) {
+    constructionGloutonne(best);
+    constructionGloutonneInverse(worst);
+
+    Solution bestPrim ;
+    creerSolution(best->pb, &bestPrim);
+
+    Solution worstPrim;
+    creerSolution(best->pb, &worstPrim);
+
+    copierSolution(best , &bestPrim);
+
+    for (int ind = 0 ; ind <  best->pb->nbVar ; ind++){
+        if(best->valeur[ind] != worst->valeur[ind]){
+
+            if ((*worst).valeur[ind] == 1){
+                worstPrim.valeur[ind] = 0;
+                majSommeCtr0(&worstPrim , ind);
+            }else{
+                worstPrim.valeur[ind] = 1;
+                majSommeCtr1(&worstPrim , ind);
+            }
+            if(worstPrim.nbCtrVio > 0){
+                reconstruireSolution(&worstPrim);
+            }
+            copierSolution(worst , &worstPrim);
+            rechercheVNS(&worstPrim , 3);
+            initialiserZ(&worstPrim);
+            initialiserListeIndices(&worstPrim);
+            initialiserSommeCtr(&worstPrim);
+
+            if (worstPrim.z > best->z){
+                copierSolution(&worstPrim , best);
+            }
+        }
+
+    }
+
+}
