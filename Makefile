@@ -1,6 +1,6 @@
 .PHONY: clean
 CC = gcc
-CFLAGS = -std=c99 -pedantic -Wfatal-errors -Wconversion -Wredundant-decls -Wshadow -Wall -Wextra -O3 -pg
+CFLAGS = -std=c99 -pedantic -Wfatal-errors -Wconversion -Wredundant-decls -Wshadow -Wall -Wextra -O3 -Ofast #-pg
 
 src/Probleme.o: src/Probleme.h src/Probleme.c
 	$(CC) $(CFLAGS) src/Probleme.c -c -o src/Probleme.o

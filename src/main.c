@@ -21,44 +21,21 @@ int main(int argc, char* argv[]) {
     // chargerProbleme("instances/test.txt", &pb);
     // chargerProbleme(argv[1], &pb);
 
-    chargerProbleme("instances/pb_100rnd0300.dat", &pb);
+    chargerProbleme("instances/pb_200rnd0700.dat", &pb);
 
     // afficherProbleme(&pb);
 
-    /*Solution sol;
+    Solution sol;
     creerSolution(&pb, &sol);
     constructionGloutonne(&sol);
-    printf("Après construction gloutonne : %d\n", sol.z);*/
+    printf("Après construction gloutonne : %d\n", sol.z);
 
-    /*rechercheVNS(&sol, 3);
+    rechercheVNS(&sol, 3);
 
     printf("Solution après VNS : \n");
-    afficherSolution(&sol);*/
-
-
-    Solution solA, solB, nouv;
-    creerSolution(&pb, &solA);
-    constructionGloutonne(&solA);
-    rechercheVNS(&solA, 3);
-    creerSolution(&pb, &solB);
-    constructionGloutonne(&solB);
-    // rechercheVNS(&solB,3);
-    printf("Sol worst : %d, Sol best : %d\n", solA.z, solB.z);
-
-    creerSolution(&pb, &nouv);
-    nouv.z = -1;
-
-    path_relinking(&solA, &solB, &nouv);
-
-    printf("Meileure trouvée : %d\n", nouv.z);
-
-    detruireSolution(&solA);
-    detruireSolution(&solB);
-    detruireSolution(&nouv);
+    afficherSolution(&sol);
 
     detruireProbleme(&pb);
-
-
 
     return 0;
 
