@@ -159,7 +159,7 @@ int rechercheLocale(Solution* sol, int k) {
 //--------------------------------------------------------------------------------
 void path_relinking(Solution* best , Solution* worst, Solution* nouv) {
 
-    int moinsBon = (best->z < worst->z ? best->z : worst->z);
+    nouv->z = (best->z < worst->z ? best->z : worst->z);
 
     /*Solution bestPrim ;
     creerSolution(best->pb, &bestPrim);
@@ -197,25 +197,58 @@ void path_relinking(Solution* best , Solution* worst, Solution* nouv) {
     Solution temp;
     creerSolution(worst->pb, &temp);
 
-    for(int i = 0; i < worst->nbVar0; i ++) {
+    printf("Solution A :\n");
+    afficherSolution(best);
+    printf("\n\nSolution B :\n");
+    afficherSolution(worst);
+    printf("\n\n");
+
+    int i = 0;
+    while(i < worst->nbVar1) {
+        // différence entre best et val, la solution est modifiée
+        if(best->valeur[worst->var1[i]] == 0) {
+            passerVariable0(worst, i);
+
+            copierSolution(worst, &temp);
+            if(temp.z >= nouv->z) {
+                rechercheLocale(&temp, 1);
+                if(temp.z > nouv->z) {
+                    copierSolution(&temp, nouv);
+                    printf("Meilleur z : %d\n", nouv->z);
+                }
+            }
+        } else {
+            i ++;
+        }
+    }
+
+    i = 0;
+    while(i < worst->nbVar0) {
         // différence entre best et val, la solution est modifiée
         if(best->valeur[worst->var0[i]] == 1) {
             passerVariable1(worst, i);
-            copierSolution(worst, &temp);
 
-            if(temp.nbCtrVio > 0) {
+            /*if(temp.nbCtrVio > 0) {
                 reconstruireSolution(&temp);
-            }
+            }*/
+            copierSolution(worst, &temp);
+            reconstruireSolution(&temp);
 
-            if(temp.z > moinsBon) {
-                rechercheVNS(&temp, 3);
-                moinsBon = temp.z;
+            if(temp.z >= nouv->z) {
+
+                rechercheLocale(&temp, 1);
                 if(temp.z > nouv->z) {
                     copierSolution(&temp, nouv);
+                    printf("Meilleur z : %d\n", nouv->z);
                 }
             }
+
+
+        } else {
+            i ++; // <- là ne posez pas trop de question, ça vient de la façon dont le tableaud des indices des var à 0 est mis à jours
         }
     }
+
 
     detruireSolution(&temp);
 

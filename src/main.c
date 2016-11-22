@@ -16,8 +16,12 @@ int main(int argc, char* argv[]) {
 
     /* doute sur pb_200rnd0500.dat -> glpk trouve 183*/
 
-    chargerProbleme(/*"instances/pb_100rnd0100.dat"*//*"instances/pb_500rnd1500.dat"*//*"test.txt"*/"instances/pb_200rnd0900.dat", &pb);
+    // chargerProbleme(/*"instances/pb_100rnd0100.dat"*//*"instances/pb_500rnd1500.dat"*//*"test.txt"*/"instances/pb_200rnd0900.dat", &pb);
+    // chargerProbleme("instances/pb_100rnd0100.dat"/*"instances/pb_500rnd1500.dat"*/, &pb);
+    // chargerProbleme("instances/test.txt", &pb);
     // chargerProbleme(argv[1], &pb);
+
+    chargerProbleme("instances/pb_100rnd0300.dat", &pb);
 
     // afficherProbleme(&pb);
 
@@ -35,15 +39,16 @@ int main(int argc, char* argv[]) {
     Solution solA, solB, nouv;
     creerSolution(&pb, &solA);
     constructionGloutonne(&solA);
+    rechercheVNS(&solA, 3);
     creerSolution(&pb, &solB);
-    constructionGloutonneInverse(&solB);
-    rechercheVND(&solB);
-    printf("Sol worst : %d, Sol best : %d\n", solB.z, solA.z);
+    constructionGloutonne(&solB);
+    // rechercheVNS(&solB,3);
+    printf("Sol worst : %d, Sol best : %d\n", solA.z, solB.z);
 
     creerSolution(&pb, &nouv);
     nouv.z = -1;
 
-    path_relinking(&solB, &solA, &nouv);
+    path_relinking(&solA, &solB, &nouv);
 
     printf("Meileure trouvée : %d\n", nouv.z);
 
