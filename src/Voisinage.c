@@ -37,14 +37,7 @@ int echange01(Solution* sol) {
     int ameliore = 0;
 
     if(zMax > sol->z) {
-        ameliore = 1;
-        sol->z = zMax;
-        sol->valeur[sol->var0[ind0Max]] = 1;
-        majSommeCtr1(sol, sol->var0[ind0Max]);
-        sol->var1[sol->nbVar1] = sol->var0[ind0Max];
-        sol->nbVar1 ++;
-        sol->nbVar0 --;
-        sol->var0[ind0Max] = sol->var0[sol->nbVar0];
+        passerVariable1(sol, ind0Max);
         //
         // printf("z = %d\n", sol->z);
         // printf("p : %d\n\n", ind0Max);
@@ -100,13 +93,7 @@ int echange01Alea(Solution* sol) {
             maillon = maillon->suiv;
         }
 
-        sol->z = maillon->z;
-        sol->valeur[sol->var0[maillon->ind0]] = 1;
-        majSommeCtr1(sol, sol->var0[maillon->ind0]);
-        sol->var1[sol->nbVar1] = sol->var0[maillon->ind0];
-        sol->nbVar1 ++;
-        sol->nbVar0 --;
-        sol->var0[maillon->ind0] = sol->var0[sol->nbVar0];
+        passerVariable1(sol, maillon->ind0);
     }
 
     // libération de la mémoire
@@ -118,6 +105,17 @@ int echange01Alea(Solution* sol) {
 
 
     return realisable;
+
+}
+
+//------------------------------------------------------------------------------
+int echange10Alea(Solution* sol) {
+
+    // ici la solution sera toujours réalisable
+    int tirage = aleaBorne(0, sol->nbVar1-1);
+    passerVariable0(sol,tirage);
+
+    return 1;
 
 }
 
@@ -468,6 +466,105 @@ int echange12Alea(Solution* sol) {
 }
 
 //------------------------------------------------------------------------------
+int echange21Alea(Solution* sol) {
+
+    typedef struct {
+        int z;
+        int ind11;
+        int ind12;
+        int ind0;
+        struct EchangeRea* suiv;
+    } EchangeRea;
+
+
+    int zVois = sol->z;
+
+    EchangeRea* tete = NULL;
+    int nbRea = 0;
+
+    // une variable est passée de 1 à 0
+    for(int i = 0; i < sol->nbVar0; i++) {
+
+        zVois += sol->pb->cout[sol->var0[i]];
+        majSommeCtr1(sol, sol->var0[i]);
+
+        // une première variables est passée de 0 à 1
+        for(int j = 0; j < sol->nbVar1-1; j++) {
+
+            zVois -= sol->pb->cout[sol->var1[j]];
+            majSommeCtr0(sol, sol->var1[j]);
+
+            // une seconde variable est passée de 0 à 1
+            for(int k = j+1; k < sol->nbVar1; k++) {
+
+                zVois -= sol->pb->cout[sol->var1[k]];
+                majSommeCtr0(sol, sol->var1[k]);
+
+                // si la solution est réalisable, mise à jour
+                if(sol->nbCtrVio == 0) {
+                    nbRea ++;
+                    EchangeRea* nouv = malloc(sizeof(EchangeRea));
+                    nouv->z = zVois;
+                    nouv->ind0 = i;
+                    nouv->ind11 = j;
+                    nouv->ind12 = k;
+                    nouv->suiv = tete;
+                    tete = nouv;
+                }
+
+                zVois += sol->pb->cout[sol->var1[k]];
+                majSommeCtr1(sol, sol->var1[k]);
+
+            }
+
+            zVois += sol->pb->cout[sol->var1[j]];
+            majSommeCtr1(sol, sol->var1[j]);
+
+        }
+
+        zVois -= sol->pb->cout[sol->var0[i]];
+        majSommeCtr0(sol, sol->var0[i]);
+    }
+
+    int realisable = (nbRea > 0);
+
+    // printf("nbRea 1/2 : %d\n", nbRea);
+
+    if(realisable) {
+
+        int tirage = aleaBorne(1, nbRea);
+        EchangeRea* choix = tete;
+        for(int i = 1; i < tirage; i++) {
+            choix = choix->suiv;
+        }
+
+        sol->valeur[sol->var0[choix->ind0]] = 1;
+        sol->valeur[sol->var1[choix->ind11]] = 0;
+        sol->valeur[sol->var1[choix->ind12]] = 0;
+
+        sol->z = choix->z;
+
+        majSommeCtr0(sol, sol->var1[choix->ind11]);
+        majSommeCtr0(sol, sol->var1[choix->ind12]);
+        majSommeCtr1(sol, sol->var0[choix->ind0]);
+
+        echanger(&sol->var1[choix->ind11], &sol->var0[choix->ind0]);
+        sol->var0[sol->nbVar0] = sol->var1[choix->ind12];
+        sol->nbVar0 ++;
+        sol->nbVar1 --;
+        sol->var1[choix->ind12] = sol->var1[sol->nbVar1];
+    }
+
+    while(tete != NULL) {
+        EchangeRea* aSup = tete;
+        tete = tete->suiv;
+        free(aSup);
+    }
+
+    return realisable;
+}
+
+//------------------------------------------------------------------------------
 void echanger(int* val1, int* val2) {
     int tmp = *val1;
     *val1 = *val2;
@@ -606,9 +703,13 @@ int voisinAlea3(Solution* sol, int k) {
     if(k == 1) {
         realisable = echange01Alea(sol);
     } else if(k == 2) {
+        realisable = echange10Alea(sol);
+    } else if(k == 3) {
         realisable = echange11Alea(sol);
-    } else {
+    } else if(k == 4) {
         realisable = echange12Alea(sol);
+    } else {
+        realisable = echange21Alea(sol);
     }
 
     return realisable;

@@ -38,6 +38,13 @@ int echange01(Solution* sol);
 int echange01Alea(Solution* sol);
 
 /**
+ * \brief pioche une solution aléatoire dans le voisinage 1/0
+ * \param sol la solution aléatoire, si possible
+ * \return 0 ssi aucune solution n'est réalisable
+ */
+int echange10Alea(Solution* sol);
+
+/**
  * \brief recherche une amélioration de la solution avec un 1/1 échange
  * \param sol la solution à améliorer
  * \return 1 ssi la solution a été améliorée
@@ -64,6 +71,13 @@ int echange12(Solution* sol);
  * \return 0 ssi aucune solution n'est réalisable
  */
 int echange12Alea(Solution* sol);
+
+/**
+ * \brief pioche une solution aléatoire dans le voisinage 2/1
+ * \param sol la solution aléatoire, si trouvée
+ * \return 0 ssi aucune solution n'est réalisable
+ */
+int echange21Alea(Solution* sol);
 
 /**
  * \bref effectue un echange aléatoire entre deux variables
