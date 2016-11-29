@@ -14,8 +14,11 @@ src/Voisinage.o: src/Voisinage.h src/Voisinage.c
 src/VNS.o: src/VNS.h src/VNS.c
 	$(CC) $(CFLAGS) src/VNS.c -c -o src/VNS.o
 
-main: src/Probleme.o src/Solution.o src/Voisinage.o src/main.c src/VNS.o
-	$(CC) $(CFLAGS) src/main.c src/Probleme.o src/Solution.o src/Voisinage.o src/VNS.o -o main
+src/EliteSet.o: src/EliteSet.h src/EliteSet.c
+	$(CC) $(CFLAGS) src/EliteSet.c -c -o src/EliteSet.o
+
+main: src/Probleme.o src/Solution.o src/Voisinage.o src/main.c src/VNS.o src/EliteSet.o
+	$(CC) $(CFLAGS) src/main.c src/Probleme.o src/Solution.o src/Voisinage.o src/VNS.o src/EliteSet.o -o main
 
 glpkSolver: src/Probleme.o src/Solution.o src/glpkSolver.c
 	$(CC) $(CFLAGS) src/glpkSolver.c src/Probleme.o src/Solution.o -lglpk -o glpkSolver
