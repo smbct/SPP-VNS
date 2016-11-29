@@ -9,6 +9,7 @@
 
 #include "VNS.h"
 #include "Voisinage.h"
+#include "EliteSet.h"
 
 //------------------------------------------------------------------------------
 void rechercheVND(Solution* sol) {
@@ -58,18 +59,10 @@ void rechercheVNS(Solution* sol, int option) {
     Solution voisin;
     creerSolution(sol->pb, &voisin);
 
-    Solution reliee;
-    creerSolution(sol->pb, &reliee);
-
-    Solution initiale;
-    creerSolution(sol->pb, &initiale);
-    copierSolution(sol, &initiale);
-
-    Solution meilleureRelinking;
-    creerSolution(sol->pb, &meilleureRelinking);
-
-    Solution resRelinking;
-    creerSolution(sol->pb, &resRelinking);
+    // ensemble des solutions élites pour le path relinking
+    EliteSet set;
+    creerEliteSet(&set);
+    ajouterSolution(&set, sol);
 
     int relk = 0;
 
@@ -86,13 +79,8 @@ void rechercheVNS(Solution* sol, int option) {
 
             // choix d'un voisin aléatoire
             int rea = 0;
-            /*if(option == 1) {
-                rea = voisinAlea1(&voisin, k);
-            } else if(option == 2) {
-                rea = voisinAlea2(&voisin, k);
-            } else {*/
-                rea = voisinAlea3(&voisin, k);
-            //}
+            rea = voisinAlea3(&voisin, k);
+
             int initial = voisin.z;
 
             // recherche locale sur ce voisin
@@ -102,19 +90,13 @@ void rechercheVNS(Solution* sol, int option) {
 
             if(rea && voisin.z > sol->z) {
                 copierSolution(&voisin, sol);
-                k = 1;
+                k = 1; // une amélioration donc on revient au premier voisinage
                 nbItMax = nbIt + 100; // critère d'arrêt : pas d'amélioration depuis une certain nombre d'itération
-                // printf("z : %d\n", sol->z);
 
-                // on lance un path relinking
-                copierSolution(&voisin, &reliee);
-                path_relinking(&initiale, &reliee, &resRelinking);
+                printf("z : %d\n", sol->z);
 
-                if(relk == 0 || resRelinking.z > meilleureRelinking.z) {
-                    copierSolution(&resRelinking, &meilleureRelinking);
-                    copierSolution(&resRelinking, sol);
-                    relk = 1;
-                }
+                // ajout des solutions dans l'eliteSet
+                ajouterSolution(&set, sol);
 
             } else {
                 k ++;
@@ -130,15 +112,11 @@ void rechercheVNS(Solution* sol, int option) {
 
     }
 
-    if(relk && meilleureRelinking.z > sol->z) {
-        copierSolution(&meilleureRelinking, sol);
-    }
+    printf("taille de l'élite set : %d\n", set.taille);
 
     detruireSolution(&voisin);
-    detruireSolution(&reliee);
-    detruireSolution(&resRelinking);
-    detruireSolution(&meilleureRelinking);
-    detruireSolution(&initiale);
+
+    detruireEliteSet(&set);
 
     fclose(sortie);
 
@@ -194,39 +172,6 @@ int rechercheLocale(Solution* sol, int k) {
 void path_relinking(Solution* best , Solution* worst, Solution* nouv) {
 
     nouv->z = (best->z < worst->z ? best->z : worst->z);
-
-    /*Solution bestPrim ;
-    creerSolution(best->pb, &bestPrim);
-    Solution worstPrim;
-    creerSolution(best->pb, &worstPrim);
-
-    copierSolution(best , &bestPrim);
-
-    for (int ind = 0 ; ind <  best->pb->nbVar ; ind++){
-        if(best->valeur[ind] != worst->valeur[ind]){
-
-            if ((*worst).valeur[ind] == 1){
-                worstPrim.valeur[ind] = 0;
-                majSommeCtr0(&worstPrim , ind);
-            }else{
-                worstPrim.valeur[ind] = 1;
-                majSommeCtr1(&worstPrim , ind);
-            }
-            if(worstPrim.nbCtrVio > 0){
-                reconstruireSolution(&worstPrim);
-            }
-            copierSolution(worst , &worstPrim);
-            rechercheVNS(&worstPrim , 3);
-            initialiserZ(&worstPrim);
-            initialiserListeIndices(&worstPrim);
-            initialiserSommeCtr(&worstPrim);
-
-            if (worstPrim.z > best->z){
-                copierSolution(&worstPrim , best);
-            }
-        }
-
-    }*/
 
     Solution temp;
     creerSolution(worst->pb, &temp);
