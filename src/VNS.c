@@ -50,7 +50,7 @@ void rechercheVNS(Solution* sol, int option) {
     int k = 1;
     int nbIt = 0, nbItMax = 100;
 
-    FILE* sortie = fopen("plot/out.res", "w");
+    // FILE* sortie = fopen("plot/out.res", "w");
 
     constructionGloutonne(sol);
 
@@ -106,9 +106,9 @@ void rechercheVNS(Solution* sol, int option) {
                 k ++;
             }
 
-            if(rea) {
+            /*if(rea) {
                 fprintf(sortie, "%d %d %d %d\n", nbIt, initial, voisin.z, sol->z);
-            }
+            }*/
             nbIt ++;
         }
 
@@ -143,7 +143,7 @@ void rechercheVNS(Solution* sol, int option) {
 
     detruireEliteSet(&set);
 
-    fclose(sortie);
+    // fclose(sortie);
 
 }
 
