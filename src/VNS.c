@@ -27,8 +27,8 @@ void rechercheVND(Solution* sol) {
     while(k <= 3) {
 
         ameliore = rechercheLocale(sol, k);
-        // fprintf(sortie, "%d %d %d %d\n", nbIter, sol->z, sol->z, sol->z);
 
+        // fprintf(sortie, "%d %d %d %d\n", nbIter, sol->z, sol->z, sol->z);
         // printf("nbIter : %d, z : %d\n", nbIter, sol->z);
 
         if(ameliore) {
@@ -62,7 +62,7 @@ void rechercheVNS(Solution* sol, int option) {
     // ensemble des solutions élites pour le path relinking
     EliteSet set;
     creerEliteSet(&set);
-    ajouterSolution(&set, sol);
+    ajouterSolution(&set, sol); // ajout de la solution gloutonne
 
     int relk = 0;
 
@@ -95,10 +95,14 @@ void rechercheVNS(Solution* sol, int option) {
 
                 printf("z : %d\n", sol->z);
 
-                // ajout des solutions dans l'eliteSet
+                // ajout des solutions améliorantes dans l'eliteSet
                 ajouterSolution(&set, sol);
 
             } else {
+
+                if(rea) {
+                    ajouterSolution(&set, sol);
+                }
                 k ++;
             }
 
@@ -112,7 +116,28 @@ void rechercheVNS(Solution* sol, int option) {
 
     }
 
-    printf("taille de l'élite set : %d\n", set.taille);
+    // printf("taille de l'élite set : %d\n", set.taille);
+
+    /*Solution solA;
+    Solution solB;
+    Solution res;
+    creerSolution(sol->pb, &solA);
+    creerSolution(sol->pb, &solB);
+    creerSolution(sol->pb, &res);
+    // lancement du path relinking entre des solution de l'elite set
+    for(int i = 0; i < set.taille/2; i++) {
+
+        eliteRndm(&set, &solA);
+        eliteRndm(&set, &solB);
+
+        path_relinking(&solA, &solB, &res);
+
+        if(res.z > sol->z) {
+            printf("le path relinking donne : z = %d\n", res.z);
+            copierSolution(&res, sol);
+        }
+
+    }*/
 
     detruireSolution(&voisin);
 
@@ -145,20 +170,6 @@ int rechercheLocale(Solution* sol, int k) {
                 break;
         }
 
-        /*switch(k) {
-            case 1:
-                ameliore = kpGenerique(0, 1, sol);
-                break;
-            case 2:
-                ameliore = kpGenerique(1, 1, sol);
-                break;
-            case 3:
-                ameliore = kpGenerique(1, 2, sol);
-                break;
-            default:
-                break;
-        }*/
-
         if(!amelioration && ameliore) {
             amelioration = 1;
         }
@@ -187,7 +198,7 @@ void path_relinking(Solution* best , Solution* worst, Solution* nouv) {
 
             if(temp.z > nouv->z) {
                 copierSolution(&temp, nouv);
-                printf("Meilleur z : %d\n", nouv->z);
+                // printf("Meilleur z : %d\n", nouv->z);
             }
         } else {
             i ++;
@@ -207,7 +218,7 @@ void path_relinking(Solution* best , Solution* worst, Solution* nouv) {
                 rechercheLocale(&temp, 1);
                 if(temp.z > nouv->z) {
                     copierSolution(&temp, nouv);
-                    printf("Meilleur z : %d\n", nouv->z);
+                    // printf("Meilleur z : %d\n", nouv->z);
                 }
             }
         } else {

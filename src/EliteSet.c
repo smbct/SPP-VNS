@@ -7,6 +7,9 @@
 
 #include "Voisinage.h" // pour aleaBorne
 
+#include <stdlib.h>
+#include <stdio.h>
+
 //------------------------------------------------------------------------------
 void creerEliteSet(EliteSet* set) {
     set->premier = 0;
@@ -47,12 +50,12 @@ void ajouterSolution(EliteSet* set, Solution* sol) {
 //------------------------------------------------------------------------------
 void eliteRndm(EliteSet* set, Solution* sol) {
 
-    int indice = aleaBorne(0, set->taille);
+    int indice = aleaBorne(0, set->taille-1);
 
-    maillon* maillon = set->premier;
-    for(int i = 0; i <= indice; i++) {
-        maillon = maillon->suiv;
+    maillon* mai = set->premier;
+    for(int i = 0; i < indice; i++) {
+        mai = mai->suiv;
     }
 
-    return maillon->solution;
+    copierSolution(&mai->solution, sol);
 }
