@@ -245,7 +245,7 @@ int echange11Alea(Solution* sol) {
 
     int realisable = (nbRea > 0);
 
-    printf("nbRea 11 : %d\n", nbRea);
+    // printf("nbRea 11 : %d\n", nbRea);
 
     if(realisable) {
 
@@ -429,7 +429,7 @@ int echange12Alea(Solution* sol) {
 
     int realisable = (nbRea > 0);
 
-    printf("nbRea 1/2 : %d\n", nbRea);
+    // printf("nbRea 1/2 : %d\n", nbRea);
 
     if(realisable) {
 

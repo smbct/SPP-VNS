@@ -21,21 +21,29 @@ int main(int argc, char* argv[]) {
     // chargerProbleme("instances/test.txt", &pb);
     // chargerProbleme(argv[1], &pb);
 
-    chargerProbleme("instances/pb_200rnd0700.dat", &pb);
+    if(argc > 1) {
 
-    // afficherProbleme(&pb);
+        // chargerProbleme("instances/pb_100rnd0600.dat", &pb);
 
-    Solution sol;
-    creerSolution(&pb, &sol);
-    constructionGloutonne(&sol);
-    printf("Après construction gloutonne : %d\n", sol.z);
+        chargerProbleme(argv[1], &pb);
 
-    rechercheVNS(&sol, 3);
+        // afficherProbleme(&pb);
 
-    printf("Solution après VNS : \n");
-    afficherSolution(&sol);
+        Solution sol;
+        creerSolution(&pb, &sol);
+        constructionGloutonne(&sol);
+        printf("Après construction gloutonne : %d\n", sol.z);
 
-    detruireProbleme(&pb);
+        rechercheVNS(&sol, 3);
+
+        printf("Solution après VNS : \n");
+        afficherSolution(&sol);
+
+        detruireProbleme(&pb);
+
+    }
+
+
 
     return 0;
 
