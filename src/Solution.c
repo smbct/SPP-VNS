@@ -209,7 +209,7 @@ void reconstruireSolution(Solution* sol) {
     while(sol->nbCtrVio > 0) {
 
         int varMin = -1;
-        // enlever la variables qui a la plus faible utilité
+        // enlever la variable qui a la plus petite utilité
         for(int indCtr = 0; indCtr < sol->pb->nbCtr; indCtr++) {
 
             // si c'est une des contraintes violées, la variable à réaffecter est recherchée

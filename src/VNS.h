@@ -34,4 +34,7 @@ int rechercheLocale(Solution* sol, int k);
  */
 void path_relinking(Solution* best , Solution* worst, Solution* nouv);
 
+
+void path_relinking_2(Solution* solA, Solution* solB, Solution* nouv);
+
 #endif // VNS_H

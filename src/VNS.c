@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <math.h>
 
 #include "VNS.h"
 #include "Voisinage.h"
@@ -130,10 +131,10 @@ void rechercheVNS(Solution* sol, int option) {
         eliteRndm(&set, &solA);
         eliteRndm(&set, &solB);
 
-        path_relinking(&solA, &solB, &res);
+        path_relinking_2(&solA, &solB, &res);
 
         if(res.z > sol->z) {
-            printf("le path relinking donne : z = %d\n", res.z);
+            printf("le path améliore : z = %d\n", res.z);
             copierSolution(&res, sol);
         }
 
@@ -187,6 +188,7 @@ void path_relinking(Solution* best , Solution* worst, Solution* nouv) {
     Solution temp;
     creerSolution(worst->pb, &temp);
 
+    // les variables à 1 sont passées à 0
     int i = 0;
     while(i < worst->nbVar1) {
         // différence entre best et val, la solution est modifiée
@@ -205,6 +207,7 @@ void path_relinking(Solution* best , Solution* worst, Solution* nouv) {
         }
     }
 
+    // les variables à 1 sont passées à 0
     i = 0;
     while(i < worst->nbVar0) {
         // différence entre best et val, la solution est modifiée
@@ -227,5 +230,79 @@ void path_relinking(Solution* best , Solution* worst, Solution* nouv) {
     }
 
     detruireSolution(&temp);
+
+}
+
+
+//------------------------------------------------------------------------------
+void path_relinking_2(Solution* solA, Solution* solB, Solution* nouv) {
+
+    // reconstruction pas ok -> solution non admissible -> à voir
+
+    // printf("lancement du nouveau path relinking : \n");
+
+    int bestZ = solA->z > solB->z ? solA->z : solB->z;
+
+    // sens : on se dirige de solA vers solB
+
+    Solution temp;
+    creerSolution(solA->pb, &temp);
+
+    int nbVar0 = solA->nbVar0;
+    int nbVar1 = solA->nbVar1;
+    int cpt0 = 0;
+    int cpt1 = 0;
+    int sens = 0;
+    int changement = 0;
+    // stratégie : on alterne les variables qui passent à 1 et celles qui passent à 0
+
+    while(cpt0 < nbVar0 && cpt1 < nbVar1) {
+
+        // printf("cpt0 : %d, cpt1 : %d\n", cpt0, cpt1);
+
+        changement = 0;
+
+        if(sens == 0) {
+
+            if(solB->valeur[solA->var0[cpt0]] == 1) { // la variable doit passer à 1
+                changement = 1;
+                passerVariable1(solA, cpt0);
+                nbVar0 --;
+            } else {
+                cpt0 ++;
+            }
+
+        } else {
+
+            if(solB->valeur[solA->var1[cpt1]] == 0) {
+                changement = 1;
+                passerVariable0(solA, cpt1);
+                nbVar1 --;
+            } else {
+                cpt1 ++;
+            }
+
+        }
+
+        if(changement) {
+
+            copierSolution(solA, &temp);
+            if(temp.nbCtrVio > 0) {
+                reconstruireSolution(&temp);
+            }
+
+            rechercheLocale(&temp, 1);
+            rechercheLocale(&temp, 2);
+            rechercheLocale(&temp, 3);
+
+            if(temp.z > bestZ) {
+                bestZ = temp.z;
+                copierSolution(&temp, nouv);
+            }
+
+            sens = 1-sens;
+        }
+
+    }
 
 }
