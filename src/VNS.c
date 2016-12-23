@@ -12,6 +12,8 @@
 #include "Voisinage.h"
 #include "EliteSet.h"
 
+#include "ListeRecherche.h"
+
 //------------------------------------------------------------------------------
 void rechercheVND(Solution* sol) {
 
@@ -151,6 +153,97 @@ void rechercheVNS(Solution* sol, int option) {
     // fclose(sortie);
 
 }
+
+//------------------------------------------------------------------------------
+void rechercheVNS2(Solution* sol) {
+
+    // variante avec la liste de recherche
+
+    int k = 1;
+    int nbIt = 0;
+
+    constructionGloutonne(sol);
+    printf("Après construction gloutonne : %d\n", sol->z);
+
+    Solution voisin;
+    creerSolution(sol->pb, &voisin);
+
+    ListeRecherche liste;
+    initialiserListeRecherche(&liste);
+    ajouterSolutionListeRecherche(&liste, sol);
+
+    int nbItMax[30];
+    nbItMax[0] = 10;
+    for(int i = 1; i < 30; i++) {
+        nbItMax[i] = -1;
+    }
+
+
+    int continuer;
+
+    while(liste.taille > 0) {
+
+        k = 1;
+        continuer = 1;
+
+        printf("taille de la liste : %d\n", liste.taille);
+        printf("nbIt dernier maillon : %d\n", liste.dernier->nbIt);
+        printf("nbItMax actuel : %d\n", nbItMax[liste.taille-1]);
+        printf("meilleur z : %d\n\n", sol->z);
+
+        if(liste.dernier->nbIt >= nbItMax[liste.taille-1]) { // le temps accordé à ce noeud est épuisé, il est retiré
+            retirerSolutionListeRecherche(&liste);
+            continuer = 0;
+        }
+
+        while(continuer && k <= 5) {
+
+            liste.dernier->nbIt ++;
+
+            // on part de la solution actuelle qui est recopiée
+            copierSolution(&liste.dernier->sol, &voisin);
+
+            // choix d'un voisin aléatoire
+            int rea = 0;
+            rea = voisinAlea3(&voisin, k);
+
+            int initial = voisin.z;
+
+            // recherche locale sur ce voisin
+            if(rea) {
+                rechercheLocale(&voisin, k);
+            }
+
+            // si le voisin trouvé est meilleur que la solution actuelle connue, on bascule vers ce voisin là
+            if(rea && voisin.z > liste.dernier->sol.z) {
+
+                // branchement dans la liste de recherche
+                ajouterSolutionListeRecherche(&liste, &voisin);
+
+                if(nbItMax[liste.taille-1] == -1) {
+                    nbItMax[liste.taille-1] = (double)nbItMax[liste.taille-2]*0.05;
+                    if(nbItMax[liste.taille-1] < 1) {
+                        nbItMax[liste.taille-1] = 1;
+                    }
+                }
+                continuer = 0;
+
+                // mise à jour de la meilleure solution connue si nécessaire
+                if(voisin.z > sol->z) {
+                    copierSolution(&voisin, sol);
+                    printf("z : %d\n", sol->z);
+                }
+
+            } else {
+                k ++;
+            }
+
+        }
+
+    }
+
+}
+
 
 
 //------------------------------------------------------------------------------
