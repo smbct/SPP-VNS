@@ -125,6 +125,7 @@ void rechercheVNS(Solution* sol, int option) {
     creerSolution(sol->pb, &solA);
     creerSolution(sol->pb, &solB);
     creerSolution(sol->pb, &res);
+
     // lancement du path relinking entre des solution de l'elite set
     for(int i = 0; i < set.taille/2; i++) {
 
@@ -136,10 +137,7 @@ void rechercheVNS(Solution* sol, int option) {
         if(res.z > sol->z) {
             printf("le path améliore : z = %d\n", res.z);
 
-            initialiserSommeCtr(&res);
-            initialiserZ(&res);
-            printf("nbCtrVio : %d\n", res.nbCtrVio);
-            printf("z init = %d\n", res.z);
+            afficherSolution(&res);
 
             copierSolution(&res, sol);
         }
@@ -193,6 +191,7 @@ void path_relinking(Solution* best , Solution* worst, Solution* nouv) {
 
     Solution temp;
     creerSolution(worst->pb, &temp);
+
 
     // les variables à 1 sont passées à 0
     int i = 0;
@@ -248,6 +247,7 @@ void path_relinking_2(Solution* solA, Solution* solB, Solution* nouv) {
     // printf("lancement du nouveau path relinking : \n");
 
     int bestZ = solA->z > solB->z ? solA->z : solB->z;
+    copierSolution(solA->z > solB->z ? solA : solB, nouv);
 
     // sens : on se dirige de solA vers solB
 
@@ -263,8 +263,6 @@ void path_relinking_2(Solution* solA, Solution* solB, Solution* nouv) {
     // stratégie : on alterne les variables qui passent à 1 et celles qui passent à 0
 
     while(cpt0 < nbVar0 && cpt1 < nbVar1) {
-
-        // printf("cpt0 : %d, cpt1 : %d\n", cpt0, cpt1);
 
         changement = 0;
 
@@ -293,6 +291,7 @@ void path_relinking_2(Solution* solA, Solution* solB, Solution* nouv) {
         if(changement) {
 
             copierSolution(solA, &temp);
+
             if(temp.nbCtrVio > 0) {
                 reconstruireSolution(&temp);
             }
