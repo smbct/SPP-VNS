@@ -119,7 +119,7 @@ void rechercheVNS(Solution* sol, int option) {
 
     // printf("taille de l'élite set : %d\n", set.taille);
 
-    /*Solution solA;
+    Solution solA;
     Solution solB;
     Solution res;
     creerSolution(sol->pb, &solA);
@@ -135,10 +135,16 @@ void rechercheVNS(Solution* sol, int option) {
 
         if(res.z > sol->z) {
             printf("le path améliore : z = %d\n", res.z);
+
+            initialiserSommeCtr(&res);
+            initialiserZ(&res);
+            printf("nbCtrVio : %d\n", res.nbCtrVio);
+            printf("z init = %d\n", res.z);
+
             copierSolution(&res, sol);
         }
 
-    }*/
+    }
 
     detruireSolution(&voisin);
 

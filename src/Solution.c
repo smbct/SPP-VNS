@@ -25,6 +25,7 @@ void initialiserZ(Solution* sol) {
 //------------------------------------------------------------------------------
 void initialiserSommeCtr(Solution* sol) {
 
+    sol->nbCtrVio = 0;
     for(int indCtr = 0; indCtr < sol->pb->nbCtr; indCtr++) {
 
         // intialisation de la somme à 0
@@ -215,7 +216,7 @@ void reconstruireSolution(Solution* sol) {
             // si c'est une des contraintes violées, la variable à réaffecter est recherchée
             if(sol->sommeCtr[indCtr] > 1) {
 
-                // parcours de chaque variable de la contrainte
+                // parcours de chaque variable
                 for(int var = 0; var < sol->pb->nbVar; var++) {
                     if(sol->valeur[var] == 1 && sol->pb->contrainte[indCtr][var] == 1) {
                         // mise à jour de l'utilité minimale trouvée
@@ -238,7 +239,7 @@ void reconstruireSolution(Solution* sol) {
                 ind1Var ++;
             }
         }
-        sol->var0[sol->nbVar0] = ind1Var;
+        sol->var0[sol->nbVar0] = varMin;
         sol->nbVar0 ++;
         sol->nbVar1 --;
         sol->var1[ind1Var] = sol->var1[sol->nbVar1];
