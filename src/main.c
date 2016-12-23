@@ -9,7 +9,6 @@
 //------------------------------------------------------------------------------
 int main(int argc, char* argv[]) {
 
-
     srand((unsigned int)time(NULL));
 
     Probleme pb;
@@ -39,9 +38,6 @@ int main(int argc, char* argv[]) {
     afficherSolution(&sol);
 
     detruireProbleme(&pb);
-
-
-
 
     return 0;
 
