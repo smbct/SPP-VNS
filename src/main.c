@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
     // chargerProbleme(argv[1], &pb);
 
 
-    chargerProbleme("instances/pb_200rnd0900.dat", &pb);
+    chargerProbleme("instances/pb_500rnd0100.dat", &pb);
 
     // chargerProbleme(argv[1], &pb);
 
@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
     Solution sol;
     creerSolution(&pb, &sol);
 
-    rechercheVNS2(&sol);
+    rechercheVNS(&sol, 3);
 
     printf("Solution après VNS : \n");
     afficherSolution(&sol);
