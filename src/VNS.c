@@ -173,59 +173,66 @@ void rechercheVNS2(Solution* sol) {
     ajouterSolutionListeRecherche(&liste, sol);
 
     int nbItMax[30];
-    nbItMax[0] = 10;
-    for(int i = 1; i < 30; i++) {
-        nbItMax[i] = -1;
+    nbItMax[0] = 50;
+    nbItMax[1] = 10;
+    nbItMax[2] = 5;
+    for(int i = 3; i < 30; i++) {
+        nbItMax[i] = 1;
     }
 
 
     int continuer;
+
+    int nbNoeud = 0;
 
     while(liste.taille > 0) {
 
         k = 1;
         continuer = 1;
 
-        printf("taille de la liste : %d\n", liste.taille);
-        printf("nbIt dernier maillon : %d\n", liste.dernier->nbIt);
-        printf("nbItMax actuel : %d\n", nbItMax[liste.taille-1]);
-        printf("meilleur z : %d\n\n", sol->z);
 
-        if(liste.dernier->nbIt >= nbItMax[liste.taille-1]) { // le temps accordé à ce noeud est épuisé, il est retiré
+
+        /*if(liste.dernier->nbIt >= nbItMax[liste.taille-1]) { // le temps accordé à ce noeud est épuisé, il est retiré
             retirerSolutionListeRecherche(&liste);
             continuer = 0;
-        }
+        }*/
 
         while(continuer && k <= 5) {
 
-            liste.dernier->nbIt ++;
+            printf("taille de la liste : %d\n", liste.taille);
+            printf("nbIt dernier maillon : %d\n", liste.dernier->nbIt);
+            printf("nbItMax actuel : %d\n", nbItMax[liste.taille-1]);
+            printf("meilleur z : %d\n\n", sol->z);
 
             // on part de la solution actuelle qui est recopiée
             copierSolution(&liste.dernier->sol, &voisin);
+
+            printf("a\n");
 
             // choix d'un voisin aléatoire
             int rea = 0;
             rea = voisinAlea3(&voisin, k);
 
+            printf("b\n");
+
             int initial = voisin.z;
 
             // recherche locale sur ce voisin
             if(rea) {
+                printf("début local search : %d\n", k);
                 rechercheLocale(&voisin, k);
+                printf("fin local search\n");
             }
+
+            printf("c\n");
 
             // si le voisin trouvé est meilleur que la solution actuelle connue, on bascule vers ce voisin là
             if(rea && voisin.z > liste.dernier->sol.z) {
 
                 // branchement dans la liste de recherche
                 ajouterSolutionListeRecherche(&liste, &voisin);
+                nbNoeud ++;
 
-                if(nbItMax[liste.taille-1] == -1) {
-                    nbItMax[liste.taille-1] = (double)nbItMax[liste.taille-2]*0.05;
-                    if(nbItMax[liste.taille-1] < 1) {
-                        nbItMax[liste.taille-1] = 1;
-                    }
-                }
                 continuer = 0;
 
                 // mise à jour de la meilleure solution connue si nécessaire
@@ -238,9 +245,20 @@ void rechercheVNS2(Solution* sol) {
                 k ++;
             }
 
+            printf("d\n");
+
+            if(liste.dernier->nbIt >= nbItMax[liste.taille-1]) { // le temps accordé à ce noeud est épuisé, il est retiré
+                retirerSolutionListeRecherche(&liste);
+                continuer = 0;
+            } else {
+                liste.dernier->nbIt ++;
+            }
+
         }
 
     }
+
+    printf("nbNoeud : %d\n", nbNoeud);
 
 }
 
@@ -284,7 +302,6 @@ void path_relinking(Solution* best , Solution* worst, Solution* nouv) {
 
     Solution temp;
     creerSolution(worst->pb, &temp);
-
 
     // les variables à 1 sont passées à 0
     int i = 0;
