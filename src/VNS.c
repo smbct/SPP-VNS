@@ -57,7 +57,7 @@ void rechercheVNS(Solution* sol, int option) {
 
     constructionGloutonne(sol);
 
-    // printf("z initial : %d\n", sol->z);
+    printf("z initial : %d\n", sol->z);
 
     Solution voisin;
     creerSolution(sol->pb, &voisin);
@@ -73,7 +73,7 @@ void rechercheVNS(Solution* sol, int option) {
 
         k = 1;
 
-        while(k <= 5) {
+        while(k <= 2) {
 
             // printf("nbIt : %d\n", nbIt);
 
@@ -103,9 +103,6 @@ void rechercheVNS(Solution* sol, int option) {
 
             } else {
 
-                if(rea) {
-                    ajouterSolution(&set, sol);
-                }
                 k ++;
             }
 
@@ -119,7 +116,7 @@ void rechercheVNS(Solution* sol, int option) {
 
     }
 
-    // printf("taille de l'élite set : %d\n", set.taille);
+    printf("taille de l'élite set : %d\n", set.taille);
 
     Solution solA;
     Solution solB;
@@ -173,9 +170,9 @@ void rechercheVNS2(Solution* sol) {
     ajouterSolutionListeRecherche(&liste, sol);
 
     int nbItMax[30];
-    nbItMax[0] = 50;
-    nbItMax[1] = 10;
-    nbItMax[2] = 5;
+    nbItMax[0] = 10;
+    nbItMax[1] = 5;
+    nbItMax[2] = 3;
     for(int i = 3; i < 30; i++) {
         nbItMax[i] = 1;
     }
