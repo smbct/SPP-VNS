@@ -159,6 +159,10 @@ double calculerUtilite(Probleme* pb, int var) {
             somme ++;
         }
     }
-
-    return (double)pb->cout[var]/(double)somme;
+    
+    if (somme > 0){
+      return (double)pb->cout[var]/(double)somme;
+    }else{
+      return 0.0;
+    }
 }

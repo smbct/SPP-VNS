@@ -6,6 +6,8 @@
 #include "Voisinage.h"
 #include "VNS.h"
 
+#include "grasp.h"
+
 //------------------------------------------------------------------------------
 int main(int argc, char* argv[]) {
 
@@ -30,9 +32,10 @@ int main(int argc, char* argv[]) {
     Solution sol;
     creerSolution(&pb, &sol);
 
-    rechercheVNS(&sol, 3);
+    // rechercheVNS(&sol, 3);
+    reactiveGrasp(&sol, 50);
 
-    printf("Solution après VNS : \n");
+    printf("Solution après GRASP : \n");
     afficherSolution(&sol);
 
     detruireProbleme(&pb);

@@ -2,7 +2,7 @@
 CC = gcc
 CFLAGS = -std=c99 -pedantic -Wfatal-errors -Wconversion -Wredundant-decls -Wshadow -Wall -Wextra -O3 -Ofast #-pg
 
-OBJECTS_FILES = src/ListeRecherche.o src/Probleme.o src/Solution.o src/Voisinage.o src/VNS.o src/EliteSet.o
+OBJECTS_FILES = src/ListeRecherche.o src/Probleme.o src/Solution.o src/Voisinage.o src/VNS.o src/EliteSet.o src/grasp.o
 
 # Compilation des fichiers object
 %.o: %.c %.h
