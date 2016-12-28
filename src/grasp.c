@@ -72,6 +72,7 @@ void greedyRandomizedC(Solution* sol , double alpha){
         //glouton random;
 
         indCourant = rand()%(tailleRCL);
+
         // affectation de la variable à 1 si la variable est utilisable
         passerVariable1(sol , RCL[indCourant]);
         nbVarRestant --;
@@ -89,7 +90,96 @@ void greedyRandomizedC(Solution* sol , double alpha){
                 }
             }
         }
+    }
 
+    free(RCL);
+    free(tabUtilite);
+}
+
+//------------------------------------------------------------------------------
+void greedyRandomizedC2(Solution* sol , double alpha){
+    float min , max;
+    float limit;
+    int* RCL;  // la liste de candidat
+    float * tabUtilite = malloc(((long unsigned int)sol->pb->nbVar)*sizeof(float));
+
+    RCL = malloc (((long unsigned int )sol->pb->nbVar)*sizeof(int) );
+
+    for(int i = 0 ; i < sol->pb->nbVar ; i++){
+        tabUtilite[i] = (float) sol->pb->utilite[i];
+    }
+    //initialisation
+    initialiserZ(sol);
+    initialiserListeIndices(sol);
+    initialiserSommeCtr(sol);
+
+
+    // trier le tableau
+    double temp;
+    int temp1;
+    int b = 1; //boolean pour savoir si on est a la limit
+    int tailleRCL = 0; // taille de la RCL
+    int nbVarRestant = sol->nbVar0;
+
+    int indCourant = 0;
+    int k ;
+
+
+    while(nbVarRestant > 0 ) {
+
+        //recherche du max et du min
+        min = -1; max = tabUtilite[0];
+        for(int i = 1 ; i < sol->nbVar0; i++){
+            if((min > tabUtilite[sol->var0[i]] && tabUtilite[sol->var0[i]] != -1 ) || min == -1){
+                min = tabUtilite[sol->var0[i]];
+            }
+            if(max < tabUtilite[sol->var0[i]]){
+                max = tabUtilite[sol->var0[i]];
+            }
+        }
+
+        //calcul de limit
+        limit = min + alpha * (max - min);
+
+        //retrouver la taille de la RCL
+        tailleRCL = 0;
+        for(int i = 0 ; i < sol->pb->nbVar ; i++){
+            if(tabUtilite[i] >= limit){
+                tailleRCL++;
+            }
+        }
+
+        //remplissage de la RCL
+        temp1 = 0;
+        for(int i =0 ; i < sol->pb->nbVar  ; i++){
+            if(tabUtilite[i] != -1 && temp1 < tailleRCL){
+                RCL[temp1] = i;
+                //printf("%d  " , RCL[temp1]);
+                temp1++;
+            }
+        }
+
+        //glouton random;
+
+        indCourant = rand()%(tailleRCL);
+
+        // affectation de la variable à 1 si la variable est utilisable
+        passerVariable1(sol , RCL[indCourant]);
+        nbVarRestant --;
+        tabUtilite[RCL[indCourant]] = -1;
+
+        // suppression des variables ne pouvant plus être affectées à 1
+        for(int indCtr = 0; indCtr < sol->pb->nbCtr; indCtr ++) {
+            if(sol->pb->contrainte[indCtr][RCL[indCourant]] == 1) {
+                // parcours des variables apparaissant dans la contrainte
+                for(int indVar = 0; indVar < sol->pb->nbVar; indVar ++) {
+                    if(sol->pb->contrainte[indCtr][indVar] == 1 && tabUtilite[indVar] != -1) {
+                        nbVarRestant --;
+                        tabUtilite[indVar] = -1;
+                    }
+                }
+            }
+        }
 
 
     }
@@ -233,8 +323,7 @@ void reactiveGrasp(Solution * meilleure , int nbIt) {
         //rechercheLocale
         rechercheLocale(&sol , 1);
         rechercheLocale(&sol , 2);
-        //rechercheVNS(&sol, 3);
-        //rechercheVND(&sol);
+
         //update
 
         if(sol.z > meilleure->z){
