@@ -25,7 +25,6 @@ void greedyRandomizedC(Solution* sol , double alpha){
     initialiserListeIndices(sol);
     initialiserSommeCtr(sol);
 
-
     // trier le tableau
     double temp;
     int temp1;
@@ -307,7 +306,7 @@ void reactiveGrasp(Solution * meilleure , int nbIt) {
         printf("\n\n");*/
 
         alpha = listeAlpha[pos];
-        printf("alpha = %.3lf\n", listeAlpha[pos]);
+        // printf("alpha = %.3lf\n", listeAlpha[pos]);
         //greedyRandomizedC
         greedyRandomizedC2(&sol , alpha);
 
@@ -320,7 +319,7 @@ void reactiveGrasp(Solution * meilleure , int nbIt) {
             zBest = sol.z;
             if(sol.z > meilleure->z){
                 copierSolution(&sol , meilleure);
-                printf("solution z =  %d\n", sol.z );
+                // printf("solution z =  %d\n", sol.z );
             }
         }
 
