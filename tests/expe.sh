@@ -1,5 +1,5 @@
 for f in ../instances/*.dat
 do
-    printf $f >> resultats
-    ./../main $f >> resultats
+    printf $f
+    ./../main $f
 done

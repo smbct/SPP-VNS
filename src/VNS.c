@@ -57,7 +57,7 @@ void rechercheVNS(Solution* sol, int option) {
 
     constructionGloutonne(sol);
 
-    printf("z initial : %d\n", sol->z);
+    // printf("z initial : %d\n", sol->z);
 
     Solution voisin;
     creerSolution(sol->pb, &voisin);
@@ -96,12 +96,16 @@ void rechercheVNS(Solution* sol, int option) {
                 k = 1; // une amélioration donc on revient au premier voisinage
                 nbItMax = nbIt + 100; // critère d'arrêt : pas d'amélioration depuis une certain nombre d'itération
 
-                printf("z : %d\n", sol->z);
+                // printf("z : %d\n", sol->z);
 
                 // ajout des solutions améliorantes dans l'eliteSet
                 ajouterSolution(&set, sol);
 
             } else {
+
+                if(set.taille < 30) {
+                    ajouterSolution(&set, sol);
+                }
 
                 k ++;
             }
@@ -116,7 +120,10 @@ void rechercheVNS(Solution* sol, int option) {
 
     }
 
-    printf("taille de l'élite set : %d\n", set.taille);
+    printf("Avec VNS, on obtient : z = %d\n", sol->z);
+
+    /*printf("lancement du path relinking\n");
+    // printf("taille de l'élite set : %d\n", set.taille);
 
     Solution solA;
     Solution solB;
@@ -134,14 +141,14 @@ void rechercheVNS(Solution* sol, int option) {
         path_relinking_2(&solA, &solB, &res);
 
         if(res.z > sol->z) {
-            printf("le path améliore : z = %d\n", res.z);
+            // printf("le path améliore : z = %d\n", res.z);
 
             afficherSolution(&res);
 
             copierSolution(&res, sol);
         }
 
-    }
+    }*/
 
     detruireSolution(&voisin);
 
@@ -319,7 +326,7 @@ void path_relinking(Solution* best , Solution* worst, Solution* nouv) {
         }
     }
 
-    // les variables à 1 sont passées à 0
+    // les variables à 0 sont passées à 1
     i = 0;
     while(i < worst->nbVar0) {
         // différence entre best et val, la solution est modifiée
