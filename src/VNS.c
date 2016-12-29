@@ -73,7 +73,7 @@ void rechercheVNS(Solution* sol, int option) {
 
         k = 1;
 
-        while(k <= 2) {
+        while(k <= 5) {
 
             // printf("nbIt : %d\n", nbIt);
 

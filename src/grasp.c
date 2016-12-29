@@ -6,6 +6,8 @@
 #include "Voisinage.h"
 #include "VNS.h"
 
+#define NB_ALPHA 4
+
 //------------------------------------------------------------------------------
 void greedyRandomizedC(Solution* sol , double alpha){
     float min , max;
@@ -183,8 +185,8 @@ void greedyRandomizedC2(Solution* sol , double alpha){
 
     }
 
-    printf("solution greedy randomizée :\n");
-    afficherSolution(sol);
+    /*printf("solution greedy randomizée :\n");
+    afficherSolution(sol);*/
 
     free(RCL);
     free(dispos);
@@ -193,7 +195,6 @@ void greedyRandomizedC2(Solution* sol , double alpha){
 
 //------------------------------------------------------------------------------
 void grasp(Solution* meilleure , int nbIt , double alpha){
-
 
     meilleure->z = 0;
     Solution sol;
@@ -225,24 +226,33 @@ void grasp(Solution* meilleure , int nbIt , double alpha){
 
 //------------------------------------------------------------------------------
 void reactiveGrasp(Solution * meilleure , int nbIt) {
-    int nbAlpha = 4;
-    double alpha;
-    float proba;
+    const int Nalpha = 50;
 
-    float listeAlpha [4] = {0.30 , 0.45 , 0.65 , 0.85};
-    float p[nbAlpha];
-    float q[nbAlpha];
-    float somq = 0.0;
-    float zAvg[nbAlpha];
-    float zBest[nbAlpha];
-    float zWorst[nbAlpha];
+    double alpha;
+    double proba;
+
+    double listeAlpha [] = {0.30 , 0.45 , 0.65 , 0.85};
+
+    // double listeAlpha [] = {0.05, 0.15 , 0.25 , 0.35 , 0.45, 0.55, 0.65, 0.75, 0.85, 0.95};
+
+
+    double p[NB_ALPHA];
+    double q[NB_ALPHA];
+    double somq = 0.0;
+    double zSomme[NB_ALPHA];
+    int nbChoix[NB_ALPHA]; // nombre de fois que le alpha a été choisi, pour le calcul de la moyenne
+    double zBest;
+    double zWorst;
 
     int pos;
 
-    for(int i = 0 ; i < nbAlpha ; i++){
-        zBest[i] = 0.0;
-        zWorst[i] = 0.0;
-        zAvg[i] = 0.0;
+    zBest = -1.;
+    zWorst = -1.;
+    for(int i = 0 ; i < NB_ALPHA ; i++){
+        zSomme[i] = 0.0;
+        nbChoix[i] = 0;
+        p[i] = 1./(double)NB_ALPHA;
+        q[i] = 0.;
     }
 
     meilleure->z = 0;
@@ -255,8 +265,47 @@ void reactiveGrasp(Solution * meilleure , int nbIt) {
     solWorst.z = 0;
     solBest.z = 0;
 
-    for(int i = 0 ; i < nbIt ; i++){
-        pos = rand()%nbAlpha;
+    for(int it = 1 ; it <= nbIt ; it++){
+
+        // tirage du alpha avec la roulette biasée
+        proba = (((double)rand()/(double)(RAND_MAX)) * 1.0);
+        alpha = 0;
+        double somme = 0.;
+        pos = 0;
+        while(pos < NB_ALPHA && somme < proba) {
+            somme += p[pos];
+            if(somme < proba) {
+                pos ++;
+            }
+        }
+
+        /*printf("proba : %lf\n", proba);
+        printf("somme : %lf\n", somme);*/
+
+        /*printf("nbChoix : ");
+        for(int i = 0; i < NB_ALPHA; i++) {
+            printf("%d, ", nbChoix[i]);
+        }
+        printf("\n\n");*/
+
+        /*printf("q : ");
+        for(int i = 0; i < NB_ALPHA; i++) {
+            printf("%lf, ", q[i]);
+        }
+        printf("\n\n");
+
+        printf("p : ");
+        for(int i = 0; i < NB_ALPHA; i++) {
+            printf("%lf, ", p[i]);
+        }
+        printf("\n\n");
+
+        printf("zSomme : ");
+        for(int i = 0; i < NB_ALPHA; i++) {
+            printf("%lf, ", zSomme[i]);
+        }
+        printf("\n\n");*/
+
         alpha = listeAlpha[pos];
         printf("alpha = %.3lf\n", listeAlpha[pos]);
         //greedyRandomizedC
@@ -267,75 +316,38 @@ void reactiveGrasp(Solution * meilleure , int nbIt) {
         rechercheLocale(&sol , 2);
 
         //update
-        if(sol.z > zBest[pos]){
-            zBest[pos] = sol.z;
+        if(sol.z > zBest || zBest < 0.){
+            zBest = sol.z;
             if(sol.z > meilleure->z){
                 copierSolution(&sol , meilleure);
                 printf("solution z =  %d\n", sol.z );
-
             }
         }
 
-        if(sol.z < zWorst[pos] || zWorst[pos] == 0.0){
-            zWorst[pos] = sol.z;
+        if(sol.z < zWorst || zWorst < 0.){
+            zWorst = sol.z;
         }
 
-        zAvg[pos] = zAvg[pos] + sol.z;
+        zSomme[pos] += sol.z;
+        nbChoix[pos] ++;
 
-        for(int j = 0 ; j < meilleure->pb->nbVar ; j++){
-            sol.valeur[j] = 0;
+        // mise à jour des probas
+        if(it % Nalpha == 0) {
+
+            somq = 0.;
+            for (int j = 0 ; j < NB_ALPHA ; j++){
+                double zAvg = zSomme[j] / (double)nbChoix[j];
+                q[j] = (zAvg - zWorst)/(zBest - zWorst);
+                somq += q[j];
+            }
+
+            for(int j = 0 ; j < NB_ALPHA ; j++){
+                p[j] = q[j]/somq;
+            }
+
         }
 
     }
 
-    for (int i = 0 ; i < nbAlpha ; i++){
-        if(zAvg[i] > 0){
-            q[i] = ((zAvg[i]/nbAlpha) - zWorst[i])/(zBest[i] - zWorst[i]);
-        }
-        somq = somq + q[i];
-    }
-
-    for(int i = 0 ; i < nbAlpha ; i++){
-        p[i] = q[i]/somq;
-        if(i > 0){
-            p[i] = p[i] + p[i-1];
-        }
-    }
-
-    for (int i = 0 ; i < nbIt ; i++){
-        srand((unsigned int)time(NULL));
-        proba = (((float)rand()/(float)(RAND_MAX)) * 1.0);
-        //choisir proba et l'alpha correspondant
-
-        if(proba < p[0] ){
-            alpha = listeAlpha[0];
-        }else if (proba>= p[0] && proba < p[1]){
-            alpha = listeAlpha[1];
-        }else if (proba>= p[1] && proba < p[2]){
-            alpha = listeAlpha[2];
-        }else if (proba>= p[2] && proba <= p[3]){
-            alpha = listeAlpha[3];
-        }
-
-        printf("alpha = %.3lf\n",alpha );
-
-        //greedyRandomizedC
-        greedyRandomizedC2(&sol , alpha);
-
-        //rechercheLocale
-        rechercheLocale(&sol , 1);
-        rechercheLocale(&sol , 2);
-
-        //update
-
-        if(sol.z > meilleure->z){
-            copierSolution(&sol , meilleure);
-            printf("solution z =  %d\n", sol.z );
-        }
-
-        for(int j = 0 ; j < meilleure->pb->nbVar ; j++){
-            sol.valeur[j] = 0;
-        }
-    }
 
 }
