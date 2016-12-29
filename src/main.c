@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     // chargerProbleme(argv[1], &pb);
 
 
-    chargerProbleme("instances/pb_100rnd0500.dat", &pb);
+    chargerProbleme("instances/pb_100rnd0900.dat", &pb);
 
     // chargerProbleme(argv[1], &pb);
 

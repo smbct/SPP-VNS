@@ -8,6 +8,25 @@
 #include "Solution.h"
 
 //------------------------------------------------------------------------------
+void resetSolution(Solution* sol) {
+
+    sol->z = 0.;
+    sol->nbVar0 = sol->pb->nbVar;
+    sol->nbVar1 = 0;
+    for(int i = 0; i < sol->pb->nbVar; i++) {
+        sol->valeur[i] = 0;
+        sol->var0[i] = i;
+    }
+
+    for(int i = 0; i < sol->pb->nbCtr; i++) {
+        sol->sommeCtr[i] = 0;
+    }
+
+    sol->nbCtrVio = 0;
+
+}
+
+//------------------------------------------------------------------------------
 void initialiserZ(Solution* sol) {
 
     sol->z = 0;

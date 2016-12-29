@@ -23,6 +23,12 @@ typedef struct {
 
 
 /**
+ * \brief remet à 0 la solution (passe toutes les variables à 0)
+ * \param sol la solution
+ */
+void resetSolution(Solution* sol);
+
+/**
  * \brief initialisation de la valeur de la fonction objectif pour une solution
  * \param sol la soltion initialisée
  */
