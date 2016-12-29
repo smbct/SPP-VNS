@@ -152,17 +152,10 @@ void afficherProbleme(Probleme* probleme) {
 
 //------------------------------------------------------------------------------
 double calculerUtilite(Probleme* pb, int var) {
-    int somme = 0;
 
-    for(int i = 0; i < pb->nbCtr; i++) {
-        if(pb->contrainte[i][var] == 1) {
-            somme ++;
-        }
-    }
-    
-    if (somme > 0){
-      return (double)pb->cout[var]/(double)somme;
+    if (pb->nbCtrVar[var] > 0){
+      return (double)pb->cout[var]/(double)pb->nbCtrVar[var];
     }else{
-      return 0.0;
+      return 900000.; // grande valeur, forcément meilleure
     }
 }
