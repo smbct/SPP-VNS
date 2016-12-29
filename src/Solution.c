@@ -139,7 +139,7 @@ void constructionGloutonne(Solution* sol) {
         int indMax = -1;
 
         for(int indVar = 0; indVar < sol->pb->nbVar; indVar++) {
-            if(!inutilisable[indVar] && (uMax == -1 || sol->pb->utilite[indVar] > uMax)) {
+            if(!inutilisable[indVar] && (uMax < 0 || sol->pb->utilite[indVar] > uMax)) {
                 uMax = sol->pb->utilite[indVar];
                 indMax = indVar;
             }

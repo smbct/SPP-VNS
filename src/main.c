@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     // chargerProbleme(argv[1], &pb);
 
 
-    chargerProbleme("instances/pb_100rnd0900.dat", &pb);
+    chargerProbleme("instances/pb_100rnd0700.dat", &pb);
 
     // chargerProbleme(argv[1], &pb);
 
@@ -32,8 +32,9 @@ int main(int argc, char* argv[]) {
     Solution sol;
     creerSolution(&pb, &sol);
 
-    rechercheVNS(&sol, 3);
-    reactiveGrasp(&sol, 500);
+    // rechercheVNS(&sol, 3);
+    reactiveGrasp(&sol, 1000);
+    // grasp(&sol, 1000, 0.05);
 
     printf("Solution après GRASP : \n");
     afficherSolution(&sol);
